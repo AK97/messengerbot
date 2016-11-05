@@ -2,3 +2,6 @@ node_modules/
 
 
 .ignore 
+.iws 
+workspace.xml
+tasks.xml 
