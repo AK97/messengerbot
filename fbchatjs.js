@@ -8,9 +8,9 @@ login({email: "tarun.gogineni@gmail.com", password: ""}, function callback (err,
       logLevel: "silent"
     });
 
-    group = '1007807106011631';
+    var group = '1007807106011631';
     api.sendMessage("tracking bot is tracking", group);
-    otherGroup = '1171870206218791';
+	var otherGroup = '1171870206218791';
     me = '100000921889753';
 	var data = {};
 	var threadInfo;
