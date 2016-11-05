@@ -23,52 +23,62 @@ login({email: "clayytonbhig@gmail.com", password: "naisubhig"}, function callbac
     	}
     });
 
-    var stopListening = api.listen(function(err, message) {
+    var stopListening = api.listen(function(err, event) {
         if (err) return console.error(err);
-        if (message.threadID == group) {
-            const input = message.body;
-	        if(input === '/stopthemadness') {
-	        	api.sendMessage("fuk the frik off", group);
-	        	return stopListening();
-	        }
-	        if(input === '/status') {
-	        	api.sendMessage("still working", group);
-	   	        api.sendMessage(str(threadInfo.nicknames), group);
-	        	api.sendMessage(str(data), group);
-	        }
-	        if(input === '/kukup') {
-	        	api.sendMessage("HO HO HO", group);
-	        	api.changeNickname("Bhuge Dumbass", group, deeb);
-	        }
-	        if(input === '/dab') {
-	        	api.sendMessage({attachment: fs.createReadStream('dab.png')}, group);
-	        	api.changeNickname("Bhuge Dumbass", group, deeb);
-	        }
-	        if(input === '/gloriousdawn') {
-	        	api.sendMessage("HO HO HO", group);
-	        	api.changeGroupImage(fs.createReadStream("dab.png"), group, function callback(err) {
-			        if(err) return console.error(err);
-			    });
-	        }
-	        if(input === '/surendrekt') {
-	        	api.sendMessage("Surendrekt", group);
-	        	api.removeUserFromGroup(me, group, function callback(err){
-			        if(err) return console.error(err);
-			    });
-	        }
-	        if(input.indexOf("/8ball")==0 || input.indexOf("🎱")==0) {
-                var eightball = ["It is certain","It is decidedly so","Without a doubt", "Yes, definitely","Yes, definitely","You may rely on it",
-                    "As I see it, yes"," Most likely","Outlook good","Yes","Signs point to yes","Reply hazy try again","Ask again later","Better not tell you now",
-                    "Cannot predict now","Concentrate and ask again","Don't count on it","My reply is no","My sources say no","Outlook not so good",
-                    "Very doubtful"];
+        if (event.threadID == group) {
+        	switch(event.type)
+        	{
+        		case "message":
 
-               api.sendMessage(eightball[Math.floor(Math.random()*20)],group);
-            }
+            		const input = event.body;
+	        			if(input === '/stopthemadness') {
+	        				api.sendMessage("fuk the frik off", group);
+	        				return stopListening();
+	        			}
+	        			if(input === '/status') {
+	        				api.sendMessage("still working", group);
+	   	       			 	api.sendMessage(str(threadInfo.nicknames), group);
+	        				api.sendMessage(str(data), group);
+	        			}		
+	        			if(input === '/kukup') {
+	        				api.sendMessage("HO HO HO", group);
+	        				api.changeNickname("Bhuge Dumbass", group, deeb);
+	        			}
+	        			if(input === '/dab') {
+	        				api.sendMessage({attachment: fs.createReadStream('dab.png')}, group);
+	        					api.changeNickname("Bhuge Dumbass", group, deeb);
+	        			}
+	        			if(input === '/gloriousdawn') {
+	        				api.sendMessage("HO HO HO", group);
+	        					api.changeGroupImage(fs.createReadStream("dab.png"), group, function callback(err) {
+			        			if(err) return console.error(err);
+			    			});
+	        			}
+	        			if(input === '/surendrekt') {
+	        				api.sendMessage("Surendrekt", group);
+	        				api.removeUserFromGroup(me, group, function callback(err){
+			        			if(err) return console.error(err);
+			    			});
+	        			}
+	        			if(input.indexOf("/8ball")==0 || input.indexOf("🎱")==0) {
+                			var eightball = ["It is certain","It is decidedly so","Without a doubt", "Yes, definitely","Yes, definitely","You may rely on it",
+                    			"As I see it, yes"," Most likely","Outlook good","Yes","Signs point to yes","Reply hazy try again","Ask again later","Better not tell you now",
+                    			"Cannot predict now","Concentrate and ask again","Don't count on it","My reply is no","My sources say no","Outlook not so good",
+                    			"Very doubtful"];
 
-            console.log(typeof input);
+               			api.sendMessage(eightball[Math.floor(Math.random()*20)],group);
+            			}
 
-	        var user = message.userID;
-	        data.user++;
+            			console.log(typeof input);
+
+	        			var user = event.userID;
+	        			data.user++;
+	        	break;
+
+	        /*case "read_receipt":
+	        	api.sendMessage("Well, " + event.reader + "?",group);
+	        	break;*/
+	    }
 
         }
     });
