@@ -1,5 +1,12 @@
 var login = require("facebook-chat-api");
 const fs = require("fs");
+var cleverbot = require('cleverbot.io');
+
+
+
+var bot = new cleverbot('TYHRwNcZFicTF4xI','rKarZL4vSevwLDnjLXnGK7MRkBwud1W1');
+bot.setNick("clayton");
+
 
 login({email: "clayytonbhig@gmail.com", password: "naisubhig"}, function callback (err, api) {
     if(err) return console.error(err);
@@ -126,6 +133,14 @@ login({email: "clayytonbhig@gmail.com", password: "naisubhig"}, function callbac
 
 		               			api.sendMessage(eightball[Math.floor(Math.random()*20)], group);
 	            			}
+	            			if(input.indexOf("/talk")==0){
+								var talking = input.replace("/talk ","");
+								bot.create(function(err,Clayton){
+									bot.ask(talking,function(err,response){
+										api.sendMessage(response,group);
+									})
+								})
+							}
 	            		}
 		        			
 	        			if (event.senderID) {
