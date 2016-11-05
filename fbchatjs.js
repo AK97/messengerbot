@@ -9,12 +9,12 @@ login({email: "clayytonbhig@gmail.com", password: "naisubhig"}, function callbac
       logLevel: "silent"
     });
 
-    var group = '1144974435591141';
+    var group = '1144974435591141'; //test chat pls ignore
     api.sendMessage("Enter B H I G", group);
-    var me = '100000921889753';
+    var me = '100000921889753'; //roon's user ID
 	var data = {};
 	var threadInfo;
-	var deeb = '100003952090241';
+	var deeb = '100003952090241'; //aaron's user ID
     api.getThreadInfo(group, function(err, info) {
     	console.log(info);
     	threadInfo = info;
@@ -29,7 +29,6 @@ login({email: "clayytonbhig@gmail.com", password: "naisubhig"}, function callbac
         	switch(event.type)
         	{
         		case "message":
-
             		const input = event.body;
 	        			if(input === '/stopthemadness') {
 	        				api.sendMessage("fuk the frik off", group);
@@ -66,20 +65,21 @@ login({email: "clayytonbhig@gmail.com", password: "naisubhig"}, function callbac
                     			"Cannot predict now","Concentrate and ask again","Don't count on it","My reply is no","My sources say no","Outlook not so good",
                     			"Very doubtful"];
 
-               			api.sendMessage(eightball[Math.floor(Math.random()*20)],group);
+               			api.sendMessage(eightball[Math.floor(Math.random()*20)], group);
             			}
-
+            			
             			console.log(typeof input);
 
 	        			var user = event.userID;
 	        			data.user++;
+
 	        	break;
 
 	        /*case "read_receipt":
-	        	api.sendMessage("Well, " + event.reader + "?",group);
+	        	if (Math.random() > .8)
+	        		api.sendMessage("Well, Tarnum?",group);
 	        	break;*/
-	    }
-
+	    	}
         }
     });
 });
