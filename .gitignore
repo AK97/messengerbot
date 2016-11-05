@@ -1,2 +1,7 @@
 node_modules/
-.ideas/
+
+
+.ignore 
+.iws 
+workspace.xml
+tasks.xml 

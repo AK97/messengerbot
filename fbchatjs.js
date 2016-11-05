@@ -1,7 +1,7 @@
 var login = require("facebook-chat-api");
 const fs = require("fs"); 
 
-login({email: "", password: ""}, function callback (err, api) {
+login({email: "clayytonbhig@gmail.com", password: "naisubhig"}, function callback (err, api) {
     if(err) return console.error(err);
 
     api.setOptions({
@@ -11,7 +11,7 @@ login({email: "", password: ""}, function callback (err, api) {
 
     var group = '1144974435591141';
     api.sendMessage("tracking bot is tracking", group);
-    var me = '100000921889753';
+    me = '100000921889753';
 	var data = {};
 	var threadInfo;
     api.getThreadInfo(group, function(err, info) {
