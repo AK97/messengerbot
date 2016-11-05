@@ -26,37 +26,50 @@ login({email: "clayytonbhig@gmail.com", password: "naisubhig"}, function callbac
     var stopListening = api.listen(function(err, message) {
         if (err) return console.error(err);
         if (message.threadID == group) {
-	        if(message.body === '/stopthemadness') {
+            const input = message.body;
+	        if(input === '/stopthemadness') {
 	        	api.sendMessage("fuk the frik off", group);
 	        	return stopListening();
 	        }
-	        if(message.body === '/status') {
+	        if(input === '/status') {
 	        	api.sendMessage("still working", group);
 	   	        api.sendMessage(str(threadInfo.nicknames), group);
 	        	api.sendMessage(str(data), group);
 	        }
-	        if(message.body === '/kukup') {
+	        if(input === '/kukup') {
 	        	api.sendMessage("HO HO HO", group);
 	        	api.changeNickname("Bhuge Dumbass", group, deeb);
 	        }
-	        if(message.body === '/dab') {
+	        if(input === '/dab') {
 	        	api.sendMessage({attachment: fs.createReadStream('dab.png')}, group);
 	        	api.changeNickname("Bhuge Dumbass", group, deeb);
 	        }
-	        if(message.body === '/gloriousdawn') {
+	        if(input === '/gloriousdawn') {
 	        	api.sendMessage("HO HO HO", group);
-	        	api.changeGroupImage(fs.createReadStream("./sombrerokul.jpg"), group, function callback(err) {
+	        	api.changeGroupImage(fs.createReadStream("dab.png"), group, function callback(err) {
 			        if(err) return console.error(err);
 			    });
 	        }
-	        if(message.body === '/surendrekt') {
+	        if(input === '/surendrekt') {
 	        	api.sendMessage("Surendrekt", group);
 	        	api.removeUserFromGroup(me, group, function callback(err){
 			        if(err) return console.error(err);
 			    });
 	        }
+	        if(input.indexOf("/8ball")==0 || input.indexOf("🎱")==0) {
+                var eightball = ["It is certain","It is decidedly so","Without a doubt", "Yes, definitely","Yes, definitely","You may rely on it",
+                    "As I see it, yes"," Most likely","Outlook good","Yes","Signs point to yes","Reply hazy try again","Ask again later","Better not tell you now",
+                    "Cannot predict now","Concentrate and ask again","Don't count on it","My reply is no","My sources say no","Outlook not so good",
+                    "Very doubtful"];
+
+               api.sendMessage(eightball[Math.floor(Math.random()*20)],group);
+            }
+
+            console.log(typeof input);
+
 	        var user = message.userID;
 	        data.user++;
-        } 
+
+        }
     });
 });
