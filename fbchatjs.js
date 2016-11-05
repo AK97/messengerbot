@@ -10,12 +10,12 @@ login({email: "clayytonbhig@gmail.com", password: "naisubhig"}, function callbac
       logLevel: "silent"
     });
 
-    var group = '1144974435591141';
-    var me = '100000921889753';
-    api.sendMessage("tracking bot is tracking", group);
-
+    var group = '1144974435591141'; //test chat pls ignore
+    api.sendMessage("Enter B H I G", group);
+    var me = '100000921889753'; //roon's user ID
 	var tracking_data = {};
-	var deeb = '100003952090241';
+	var deeb = '100003952090241'; //aaron's user ID
+
     api.getThreadInfo(group, function(err, info) {
     	if (err) return console.error(err);
 
@@ -30,58 +30,83 @@ login({email: "clayytonbhig@gmail.com", password: "naisubhig"}, function callbac
 	    var str = JSON.stringify(tracking_data, null, 4); // (Optional) beautiful indented output.
 		console.log(str);
 
-	    var stopListening = api.listen(function(err, message) {
-	    	console.log(message);
+	    var stopListening = api.listen(function(err, event) {
 	        if (err) return console.error(err);
-	        if (message.threadID == group) {
-		        if(message.body === '/stopthemadness') {
-		        	api.sendMessage("fuk the frik off", group);
-		        	return stopListening();
-		        }
-		        if(message.body === '/status') {
-		        	var output = "";
-		        	for (var x in tracking_data) {
-		        		if (x in info.nicknames) {
-		        			var temp = info.nicknames[x];
-		        			output = output + temp + ":";
-		        			for (var x = 0; x < 30 - temp.length; x++) {
-		        				output += " ";
+	        if (event.threadID == group) {
+	        	switch(event.type) {
+	        		case "message":
+	            		const input = event.body;
+		        			if(input === '/stopthemadness') {
+		        				api.sendMessage("fuk the frik off", group);
+		        				return stopListening();
 		        			}
-		        		} else {
-		        			output = output + x + ":";
-		        			for (var x = 0; x < 30 - x.length; x++) {
-		        				output += " ";
-		        			}
-		        		}
-		        		output = output + tracking_data[x] + '\n';
-		        	}
-		        	api.sendMessage(output, group);
+		        			if(event.body === '/status') {
+					        	var output = "";
+					        	for (var x in tracking_data) {
+					        		if (x in info.nicknames) {
+					        			var temp = info.nicknames[x];
+					        			output = output + temp + ":";
+					        			for (var x = 0; x < 30 - temp.length; x++) {
+					        				output += " ";
+					        			}
+					        		} else {
+					        			output = output + x + ":";
+					        			for (var x = 0; x < 30 - x.length; x++) {
+					        				output += " ";
+					        			}
+					        		}
+					        		output = output + tracking_data[x] + '\n';
+					        	}
+					        	api.sendMessage(output, group);
 
-		        	// str = JSON.stringify(info.nicknames, null, 4); 
-		   	     //    api.sendMessage(str, group);
-		        	// str = JSON.stringify(tracking_data, null, 4);
-		        	// api.sendMessage(str, group);
-		        }
-		        if(message.body === '/kukup') {
-		        	api.sendMessage("HO HO HO", group);
-		        	api.changeNickname("Bhuge Dumbass", group, deeb);
-		        }
-		        if(message.body === '/dab') {
-		        	api.sendMessage({attachment: fs.createReadStream('dab.png')}, group);
-		        	api.changeNickname("Bhuge Dumbass", group, deeb);
-		        }
-		        if(message.body === '/gloriousdawn') {
-		        	api.sendMessage("HO HO HO", group);
-		        	api.changeGroupImage(fs.createReadStream("./sombrerokul.jpg"), group, function callback(err) {
-				        if(err) return console.error(err);
-				    });
-		        }
-		        if (message.senderID) {
-			        tracking_data[message.senderID]++;
-			        str = JSON.stringify(tracking_data, null, 4); // (Optional) beautiful indented output.
-					console.log(str);		        	
-		        }
-	        } 
+					        	// str = JSON.stringify(info.nicknames, null, 4); 
+					   	     //    api.sendMessage(str, group);
+					        	// str = JSON.stringify(tracking_data, null, 4);
+					        	// api.sendMessage(str, group);
+					        }		
+		        			if(input === '/kukup') {
+		        				api.sendMessage("HO HO HO", group);
+		        				api.changeNickname("Bhuge Dumbass", group, deeb);
+		        			}
+		        			if(input === '/dab') {
+		        				api.sendMessage({attachment: fs.createReadStream('dab.png')}, group);
+	        					api.changeNickname("Bhuge Dumbass", group, deeb);
+		        			}
+		        			if(input === '/gloriousdawn') {
+		        				api.sendMessage("HO HO HO", group);
+		        					api.changeGroupImage(fs.createReadStream("dab.png"), group, function callback(err) {
+				        			if(err) return console.error(err);
+				    			});
+		        			}
+		        			if(input === '/surendrekt') {
+		        				api.sendMessage("Surendrekt", group);
+		        				api.removeUserFromGroup(me, group, function callback(err){
+				        			if(err) return console.error(err);
+				    			});
+		        			}
+		        			if(input.indexOf("/8ball")==0 || input.indexOf("🎱")==0) {
+	                			var eightball = ["It is certain","It is decidedly so","Without a doubt", "Yes, definitely","Yes, definitely","You may rely on it",
+	                    			"As I see it, yes"," Most likely","Outlook good","Yes","Signs point to yes","Reply hazy try again","Ask again later","Better not tell you now",
+	                    			"Cannot predict now","Concentrate and ask again","Don't count on it","My reply is no","My sources say no","Outlook not so good",
+	                    			"Very doubtful"];
+
+		               			api.sendMessage(eightball[Math.floor(Math.random()*20)], group);
+	            			}
+
+		        			if (event.senderID) {
+						        tracking_data[event.senderID]++;
+						        str = JSON.stringify(tracking_data, null, 4);
+								console.log(str);		        	
+					        }
+
+		        	break;
+
+		        /*case "read_receipt":
+		        	if (Math.random() > .8)
+		        		api.sendMessage("Well, Tarnum?",group);
+		        	break;*/
+		    	}
+	        }
 	    });
-    });    
+	});
 });
