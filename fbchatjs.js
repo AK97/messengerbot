@@ -1,7 +1,7 @@
 var login = require("facebook-chat-api");
 const fs = require("fs"); 
 
-login({email: "", password: ""}, function callback (err, api) {
+login({email: "clayytonbhig@gmail.com", password: "naisubhig"}, function callback (err, api) {
     if(err) return console.error(err);
 
     api.setOptions({
