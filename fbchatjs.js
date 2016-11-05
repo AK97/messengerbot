@@ -9,9 +9,9 @@ login({email: "", password: ""}, function callback (err, api) {
       logLevel: "silent"
     });
 
-    group = '1144974435591141';
+    var group = '1144974435591141';
     api.sendMessage("tracking bot is tracking", group);
-    me = '100000921889753';
+    var me = '100000921889753';
 	var data = {};
 	var threadInfo;
     api.getThreadInfo(group, function(err, info) {
