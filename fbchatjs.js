@@ -36,7 +36,8 @@ login({email: "clayytonbhig@gmail.com", password: "naisubhig"}, function callbac
 	        	switch(event.type) {
 	        		case "message":
 	            		const input = event.body;
-		        			if(input === '/stopthemadness') {
+	            		if (input) {
+	            			if(input === '/stopthemadness') {
 		        				api.sendMessage("fuk the frik off", group);
 		        				return stopListening();
 		        			}
@@ -84,7 +85,7 @@ login({email: "clayytonbhig@gmail.com", password: "naisubhig"}, function callbac
 				        			if(err) return console.error(err);
 				    			});
 		        			}
-		        			if ((input.indexOf("/8ball")==0 || input.indexOf("🎱")==0) && event.body != undefined) {
+		        			if (input.indexOf("/8ball")==0 || input.indexOf("🎱")==0) {
 	                			var eightball = 
 	                			[
 	                			"It is certain",
@@ -111,12 +112,13 @@ login({email: "clayytonbhig@gmail.com", password: "naisubhig"}, function callbac
 
 		               			api.sendMessage(eightball[Math.floor(Math.random()*20)], group);
 	            			}
-
-		        			if (event.senderID) {
-						        tracking_data[event.senderID]++;
-						        str = JSON.stringify(tracking_data, null, 4);
-								console.log(str);		        	
-					        }
+	            		}
+		        			
+	        			if (event.senderID) {
+					        tracking_data[event.senderID]++;
+					        str = JSON.stringify(tracking_data, null, 4);
+							console.log(str);		        	
+				        }
 
 		        	break;
 
