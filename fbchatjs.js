@@ -10,7 +10,7 @@ login({email: "clayytonbhig@gmail.com", password: "naisubhig"}, function callbac
     });
 
     var group = '1144974435591141';
-    api.sendMessage("tracking bot is tracking", group);
+    api.sendMessage("Enter B H I G", group);
     var me = '100000921889753';
 	var data = {};
 	var threadInfo;
@@ -46,6 +46,12 @@ login({email: "clayytonbhig@gmail.com", password: "naisubhig"}, function callbac
 	        if(message.body === '/gloriousdawn') {
 	        	api.sendMessage("HO HO HO", group);
 	        	api.changeGroupImage(fs.createReadStream("./sombrerokul.jpg"), group, function callback(err) {
+			        if(err) return console.error(err);
+			    });
+	        }
+	        if(message.body === '/surendrekt') {
+	        	api.sendMessage("Surendrekt", group);
+	        	api.removeUserFromGroup(me, group, function callback(err){
 			        if(err) return console.error(err);
 			    });
 	        }
