@@ -1,6 +1,7 @@
 var login = require("facebook-chat-api");
+const fs = require("fs"); 
 
-login({email: "tarun.gogineni@gmail.com", password: ""}, function callback (err, api) {
+login({email: "tarun.gogineni@gmail.com", password: "4454vanhoosen"}, function callback (err, api) {
     if(err) return console.error(err);
 
     api.setOptions({
@@ -8,9 +9,8 @@ login({email: "tarun.gogineni@gmail.com", password: ""}, function callback (err,
       logLevel: "silent"
     });
 
-    group = '1007807106011631';
+    group = '1144974435591141';
     api.sendMessage("tracking bot is tracking", group);
-    otherGroup = '1171870206218791';
     me = '100000921889753';
 	var data = {};
 	var threadInfo;
@@ -40,13 +40,13 @@ login({email: "tarun.gogineni@gmail.com", password: ""}, function callback (err,
 	        	data.me--;
 	        	api.changeNickname("Bhuge Dumbass", group, '1683495739');
 	        }
-	      //   if(message.body === '/gloriousdawn') {
-	      //   	api.sendMessage("HO HO HO", group);
-	      //   	data.me--;
-	      //   	api.changeGroupImage(fs.createReadStream("./sombreokul.jpg"), group, function callback(err) {
-			    //     if(err) return console.error(err);
-			    // });
-	      //   }
+	        if(message.body === '/gloriousdawn') {
+	        	api.sendMessage("HO HO HO", group);
+	        	data.me--;
+	        	api.changeGroupImage(fs.createReadStream("./sombrerokul.jpg"), group, function callback(err) {
+			        if(err) return console.error(err);
+			    });
+	        }
 	        var user = message.userID;
 	        data.user++;
         } 
