@@ -1,6 +1,5 @@
 var login = require("facebook-chat-api");
 const fs = require("fs");
-const util = require("util");
 
 login({email: "clayytonbhig@gmail.com", password: "naisubhig"}, function callback (err, api) {
     if(err) return console.error(err);
@@ -32,6 +31,7 @@ login({email: "clayytonbhig@gmail.com", password: "naisubhig"}, function callbac
 
 	    var stopListening = api.listen(function(err, event) {
 	        if (err) return console.error(err);
+	        console.log(event);
 	        if (event.threadID == group) {
 	        	switch(event.type) {
 	        		case "message":
@@ -84,11 +84,30 @@ login({email: "clayytonbhig@gmail.com", password: "naisubhig"}, function callbac
 				        			if(err) return console.error(err);
 				    			});
 		        			}
-		        			if(input.indexOf("/8ball")==0 || input.indexOf("🎱")==0) {
-	                			var eightball = ["It is certain","It is decidedly so","Without a doubt", "Yes, definitely","Yes, definitely","You may rely on it",
-	                    			"As I see it, yes"," Most likely","Outlook good","Yes","Signs point to yes","Reply hazy try again","Ask again later","Better not tell you now",
-	                    			"Cannot predict now","Concentrate and ask again","Don't count on it","My reply is no","My sources say no","Outlook not so good",
-	                    			"Very doubtful"];
+		        			if ((input.indexOf("/8ball")==0 || input.indexOf("🎱")==0) && event.body != undefined) {
+	                			var eightball = 
+	                			[
+	                			"It is certain",
+	                			"It is decidedly so",
+	                			"Without a doubt", 
+	                			"Yes, definitely",
+	                			"Yes, definitely",
+	                			"You may rely on it",
+	                    		"As I see it, yes",
+	                    		"Most likely",
+	                    		"Outlook good",
+	                    		"Yes",
+	                    		"Signs point to yes",
+	                    		"Reply hazy try again",
+	                    		"Ask again later",
+	                    		"Better not tell you now",
+	                    		"Cannot predict now",
+	                    		"Concentrate and ask again",
+	                    		"Don't count on it",
+	                    		"My reply is no",
+	                    		"My sources say no",
+	                    		"Outlook not so good",
+	                    		"Very doubtful"];
 
 		               			api.sendMessage(eightball[Math.floor(Math.random()*20)], group);
 	            			}
@@ -101,10 +120,10 @@ login({email: "clayytonbhig@gmail.com", password: "naisubhig"}, function callbac
 
 		        	break;
 
-		        /*case "read_receipt":
+		        case "read_receipt":
 		        	if (Math.random() > .8)
 		        		api.sendMessage("Well, Tarnum?",group);
-		        	break;*/
+		        	break;
 		    	}
 	        }
 	    });
