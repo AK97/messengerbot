@@ -26,6 +26,7 @@ login({email: "clayytonbhig@gmail.com", password: "naisubhig"}, function callbac
     var stopListening = api.listen(function(err, message) {
         if (err) return console.error(err);
         if (message.threadID == group) {
+            const type = message.body;
 	        if(message.body === '/stopthemadness') {
 	        	api.sendMessage("fuk the frik off", group);
 	        	return stopListening();
@@ -45,12 +46,24 @@ login({email: "clayytonbhig@gmail.com", password: "naisubhig"}, function callbac
 	        }
 	        if(message.body === '/gloriousdawn') {
 	        	api.sendMessage("HO HO HO", group);
-	        	api.changeGroupImage(fs.createReadStream("./sombrerokul.jpg"), group, function callback(err) {
+	        	api.changeGroupImage(fs.createReadStream("dab.png"), group, function callback(err) {
 			        if(err) return console.error(err);
 			    });
 	        }
+/*
+	        if(type.indexOf("/8ball")==0){
+                var eightball = ["It is certain","It is decidedly so","Without a doubt", "Yes, definitely","Yes, definitely","You may rely on it",
+                    "As I see it, yes"," Most likely","Outlook good","Yes","Signs point to yes","Reply hazy try again","Ask again later","Better not tell you now",
+                    "Cannot predict now","Concentrate and ask again","Don't count on it","My reply is no","My sources say no","Outlook not so good",
+                    "Very doubtful"];
+
+               api.sendMessage(eightball[Math.floor(Math.random()*20)],group);
+            }
+*/
+            console.log(typeof message.body);
 	        var user = message.userID;
 	        data.user++;
-        } 
+
+        }
     });
 });
