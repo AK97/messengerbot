@@ -18,12 +18,18 @@ login({email: "clayytonbhig@gmail.com", password: "naisubhig"}, function callbac
     });
 
     var group = '1007807106011631'; //real chat
-    api.sendMessage("Enter B H I G", group);
+    var test_chat = '1144974435591141'; // test chat
+    group = test_chat;
     var roon = '100000921889753'; //roon's user ID
 	var tracking_data = {};
 	var thread_info = {};
 	var deeb = '1683495739'; //deeb's user ID
+	var aaron = '100003952090241'; //aaron's user ID
+	deeb = aaron;
 	var file_exists = true;
+
+	api.sendMessage("Enter B H I G", group);
+
 	try {
 		tracking_data = jsonfile.readFileSync('tracking_data.json');
 	} catch(err) {
@@ -68,7 +74,8 @@ login({email: "clayytonbhig@gmail.com", password: "naisubhig"}, function callbac
 											delete output[x];
 						        		}
 						        	}
-						        	api.sendMessage(JSON.stringify(output, null, 4), group);	        					
+						        	var sorted_output = Object.keys(output).sort(function(a,b){return output[a]-output[b]});
+						        	api.sendMessage(JSON.stringify(sorted_output, null, 4), group);	        					
 		        				});
 					        }
 		        			if(input === '/kukup') {
@@ -93,6 +100,10 @@ login({email: "clayytonbhig@gmail.com", password: "naisubhig"}, function callbac
 				    			// setTimeout(api.addUserToGroup(roon, group, function callback(err){
 				    			// 	if (err) return console.error(err);
 				    			// }), 5000);
+		        			}
+
+		        			if(input === '/hegg') {
+		        				api.sendMessage({attachment: fs.createReadStream('hegg.gif')}, group);
 		        			}
 
 		        			if (input.indexOf("/8ball")==0 || input.indexOf("🎱")==0) {
@@ -142,7 +153,7 @@ login({email: "clayytonbhig@gmail.com", password: "naisubhig"}, function callbac
 		        	break;
 
 		        case "read_receipt":
-		        	if (Math.random() > .99 && event.reader == roon)
+		        	if (Math.random() > .90 && event.reader == roon)
 		        		api.sendMessage("Well, Tarnum?",group);
 		        	break;
 		    	}
