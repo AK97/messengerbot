@@ -29,9 +29,9 @@ login({email: "clayytonbhig@gmail.com", password: "naisubhig"}, function callbac
 	deeb = aaron;
 	var file_exists = true;
 	var rpsCountdown;
-	var gameInProgress; //stores whether there's an active rock-paper-scissors game
-	var playerHand; //player choice for rps
-	var botHand; //bot choice for rps
+	var gameInProgress = false; //stores whether there's an active rock-paper-scissors game
+	var playerHand = "";//player choice for rps
+	var botHand = ""; //bot choice for rps
 
 	api.sendMessage("Enter B H I G", group);
 
@@ -108,38 +108,52 @@ login({email: "clayytonbhig@gmail.com", password: "naisubhig"}, function callbac
 		        			}
 		        					        			
 		        			if(input === '/rps' || input === "/jkp" || gameInProgress) {
-		        				if (!gameInProgress) {	//makes sure there isn't an ongoing game before starting one	        						        					
+		        				if (!gameInProgress) {	//makes sure there isn't an ongoing game before starting a new one	        						        					
 		        					api.sendMessage("Saisho wa guu!", group);
 		        					setTimeout(function() {
 		        						api.sendMessage("Janken pon!", group) }, 1500);
 		        					gameInProgress = true; //flag to make sure new games can't start until this one is done
-		        					botHand = ["✊","✋","✌"][Math.floor(Math.random()*3)];		        							
-		        						rpsCountdown = setTimeout(function() {		        					
+		        					botHand = ["✊","✋","✌"][Math.floor(Math.random()*3)]; //randomize bot choice	
+		        					//start a countdown to end the game if the player doesn't make a choice	in time       							
+		        						rpsCountdown = setTimeout(function() { 	        					
 		        						console.log("Game timed out") 		        						        					
 		        						gameInProgress = false;
 		        					}, 10000);
 		        				}
-		        				else {
-		        					if(input === '/rock' || input === "/guu" || input === "✊") {
-		        						playerHand = "✊";		
-		        						rpsCountdown.clearTimeout(); 	
-		        						gameInProgress = false;			        				
-		        					}
-
-		        					if(input === '/paper' || input === "/paa" || input === "✋") {
-		        						playerHand = "✋";  	
-		        						rpsCountdown.clearTimeout(); 	
-		        						gameInProgress = false;			        				
-		        					}
-
-		        					if(input === '/scissors' || input === "/choki" || input === "✌") {
+		        				//set playerHand as per valid user input
+		        					if(input === '/rock' || input === "/guu" || input === "✊") 
+		        						playerHand = "✊";       								        						        					
+		        					if(input === '/paper' || input === "/paa" || input === "✋") 
+		        						playerHand = "✋";  			        								        						        					
+		        					if(input === '/scissors' || input === "/choki" || input === "✌") 
 		        						playerHand = "✌";
-		        						rpsCountdown.clearTimeout();  
-		        						gameInProgress = false; 		        						
-		        					}			        				
-		        					api.sendMessage(playerHand, group);
-		        					api.sendMessage(botHand, group);	   
-		        				}     				  					        				
+		        					//game logic		        								        								        						
+		        					if (playerHand === "✊" || playerHand === "✋" || playerHand === "✌" ) {
+		        						var winner = "Tie";
+		        						if (playerHand === "✊") {
+		        							if (botHand === "✋")
+		        								winner = "bot";
+		        							if (botHand === "✌")
+		        								winner = "player";
+		        						}
+		        						if (playerHand === "✋") {		        							
+		        							if (botHand === "✌")
+		        								winner = "bot";
+		        							if (botHand === "✊")
+		        								winner = "player";
+		        						}
+		        						if (playerHand === "✌") {
+		        							if (botHand === "✊")
+		        								winner = "bot";
+		        							if (botHand === "✋")
+		        								winner = "player";
+		        						}
+		        						clearTimeout(rpsCountdown); //cancel game timeout if game resolves successfully
+		        						gameInProgress = false;	
+		        						playerHand = "";	
+		        						api.sendMessage(botHand, group);
+		        						api.sendMessage("Winner: " + winner, group);
+		        					}					        					   		        				    				  					        				
 		        			}
 
 		        			if(input === '/hegg') {
