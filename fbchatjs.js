@@ -23,10 +23,10 @@ login({email: "clayytonbhig@gmail.com", password: "naisubhig"}, function callbac
 	var thread_info = {};
 	var deeb = '1683495739'; //deeb's user ID
 
-	var test_chat = '1144974435591141'; // test chat
-    group = test_chat;
-	var aaron = '100003952090241'; //aaron's user ID
-	deeb = aaron;
+	// var test_chat = '1144974435591141'; // test chat
+ //    group = test_chat;
+	// var aaron = '100003952090241'; //aaron's user ID
+	// deeb = aaron;
 
 
 	// api.sendMessage("Enter B H I G", group);
