@@ -21,12 +21,17 @@ login({email: "clayytonbhig@gmail.com", password: "naisubhig"}, function callbac
     var test_chat = '1144974435591141'; // test chat
     group = test_chat;
     var roon = '100000921889753'; //roon's user ID
+    var pio = '100006115174010'; //pio's user ID
 	var tracking_data = {};
 	var thread_info = {};
 	var deeb = '1683495739'; //deeb's user ID
 	var aaron = '100003952090241'; //aaron's user ID
 	deeb = aaron;
 	var file_exists = true;
+	var rpsCountdown;
+	var gameInProgress; //stores whether there's an active rock-paper-scissors game
+	var playerHand; //player choice for rps
+	var botHand; //bot choice for rps
 
 	api.sendMessage("Enter B H I G", group);
 
@@ -100,6 +105,41 @@ login({email: "clayytonbhig@gmail.com", password: "naisubhig"}, function callbac
 				    			// setTimeout(api.addUserToGroup(roon, group, function callback(err){
 				    			// 	if (err) return console.error(err);
 				    			// }), 5000);
+		        			}
+		        					        			
+		        			if(input === '/rps' || input === "/jkp" || gameInProgress) {
+		        				if (!gameInProgress) {	//makes sure there isn't an ongoing game before starting one	        						        					
+		        					api.sendMessage("Saisho wa guu!", group);
+		        					setTimeout(function() {
+		        						api.sendMessage("Janken pon!", group) }, 1500);
+		        					gameInProgress = true; //flag to make sure new games can't start until this one is done
+		        					botHand = ["✊","✋","✌"][Math.floor(Math.random()*3)];		        							
+		        						rpsCountdown = setTimeout(function() {		        					
+		        						console.log("Game timed out") 		        						        					
+		        						gameInProgress = false;
+		        					}, 10000);
+		        				}
+		        				else {
+		        					if(input === '/rock' || input === "/guu" || input === "✊") {
+		        						playerHand = "✊";		
+		        						rpsCountdown.clearTimeout(); 	
+		        						gameInProgress = false;			        				
+		        					}
+
+		        					if(input === '/paper' || input === "/paa" || input === "✋") {
+		        						playerHand = "✋";  	
+		        						rpsCountdown.clearTimeout(); 	
+		        						gameInProgress = false;			        				
+		        					}
+
+		        					if(input === '/scissors' || input === "/choki" || input === "✌") {
+		        						playerHand = "✌";
+		        						rpsCountdown.clearTimeout();  
+		        						gameInProgress = false; 		        						
+		        					}			        				
+		        					api.sendMessage(playerHand, group);
+		        					api.sendMessage(botHand, group);	   
+		        				}     				  					        				
 		        			}
 
 		        			if(input === '/hegg') {
