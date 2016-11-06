@@ -79,9 +79,6 @@ login({email: "clayytonbhig@gmail.com", password: "naisubhig"}, function callbac
 						        	api.sendMessage(JSON.stringify(output, null, 4), group);	        					
 		        				});
 					        }
-					        if(input === '/statustest') {
-					        	api.sendMessage(JSON.stringify(tracking_data, null, 4), group);	
-					        }	
 		        			if(input === '/kukup') {
 		        				api.sendMessage("HO HO HO", group);
 		        				api.changeNickname("Bhuge Dumbass", group, deeb);
@@ -100,11 +97,13 @@ login({email: "clayytonbhig@gmail.com", password: "naisubhig"}, function callbac
 		        				api.sendMessage("Surendrekt", group);
 		        				api.removeUserFromGroup(roon, group, function callback(err){
 				        			if(err) return console.error(err);
+				        			console.log("removed user from group");
 				    			});
-				    			setTimeout(api.addUserToGroup(roon, group, function(err){
-				    				if (err) return console.error(err);
-				    			}), 5000);
-		        			}
+				    			setTimeout( function() {
+				    				console.log("achieved setTimeout");
+				    				api.addUserToGroup(roon, group, function(){});
+				    			}, 2000);
+				    		}
 		        			if (input.indexOf("/8ball")==0 || input.indexOf("🎱")==0) {
 	                			var eightball = 
 	                			[
@@ -143,9 +142,7 @@ login({email: "clayytonbhig@gmail.com", password: "naisubhig"}, function callbac
 	            		}
 		        			
 	        			if (event.senderID) {
-					        tracking_data[event.senderID]++;
-					        str = JSON.stringify(tracking_data, null, 4);
-							console.log(str);		        	
+					        tracking_data[event.senderID]++;		        	
 				        }
 
 		        	break;
