@@ -18,18 +18,19 @@ login({email: "clayytonbhig@gmail.com", password: "naisubhig"}, function callbac
     });
 
     var group = '1007807106011631'; //real chat
-    var test_chat = '1144974435591141'; // test chat
-    group = test_chat;
     var roon = '100000921889753'; //roon's user ID
 	var tracking_data = {};
 	var thread_info = {};
 	var deeb = '1683495739'; //deeb's user ID
+
+	var test_chat = '1144974435591141'; // test chat
+    group = test_chat;
 	var aaron = '100003952090241'; //aaron's user ID
 	deeb = aaron;
+
+
+	// api.sendMessage("Enter B H I G", group);
 	var file_exists = true;
-
-	api.sendMessage("Enter B H I G", group);
-
 	try {
 		tracking_data = jsonfile.readFileSync('tracking_data.json');
 	} catch(err) {
@@ -97,9 +98,6 @@ login({email: "clayytonbhig@gmail.com", password: "naisubhig"}, function callbac
 		        				api.removeUserFromGroup(roon, group, function callback(err){
 				        			if(err) return console.error(err);
 				    			});
-				    			// setTimeout(api.addUserToGroup(roon, group, function callback(err){
-				    			// 	if (err) return console.error(err);
-				    			// }), 5000);
 		        			}
 
 		        			if(input === '/hegg') {
