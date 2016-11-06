@@ -108,8 +108,8 @@ login({email: "clayytonbhig@gmail.com", password: "naisubhig"}, function callbac
 		        				api.sendMessage("May the dew be with you", roon);
 		        				api.addUserToGroup(roon, group, function callback(err){
 				    				if (err) return console.error(err);
-				    			});*/
-		        			}
+				    			});
+		        			}*/
 		        			if (input.indexOf("/8ball")==0 || input.indexOf("🎱")==0) {
 	                			var eightball = 
 	                			[
@@ -146,7 +146,7 @@ login({email: "clayytonbhig@gmail.com", password: "naisubhig"}, function callbac
 								})
 							}
 	            		}
-	            				        			
+
 	        			if (event.senderID) {
 					        tracking_data[event.senderID]++;
 					        str = JSON.stringify(tracking_data, null, 4);
