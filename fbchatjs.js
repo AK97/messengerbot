@@ -85,12 +85,11 @@ login({email: "clayytonbhig@gmail.com", password: "naisubhig"}, function callbac
 		        			}
 		        			if(input === '/dab') {
 		        				api.sendMessage({attachment: fs.createReadStream('dab.png')}, group);
-	        					api.changeNickname("Bhuge Dumbass", group, deeb);
 		        			}
 		        			if(input === '/gloriousdawn') {
 		        				api.sendMessage("HO HO HO", group);
 		        					api.changeGroupImage(fs.createReadStream("dab.png"), group, function callback(err) {
-				        			if(err) return console.error(err);
+				        				if(err) return console.error(err);
 				    			});
 		        			}
 		        			if(input === '/surendrekt') {
@@ -99,11 +98,11 @@ login({email: "clayytonbhig@gmail.com", password: "naisubhig"}, function callbac
 				        			if(err) return console.error(err);
 				        			console.log("removed user from group");
 				    			});
-				    			setTimeout( function() {
-				    				console.log("achieved setTimeout");
-				    				api.addUserToGroup(roon, group, function(){});
-				    			}, 2000);
-				    		}
+				    			// setTimeout(api.addUserToGroup(roon, group, function callback(err){
+				    			// 	if (err) return console.error(err);
+				    			// }), 5000);
+		        			}
+
 		        			if (input.indexOf("/8ball")==0 || input.indexOf("🎱")==0) {
 	                			var eightball = 
 	                			[
@@ -140,7 +139,7 @@ login({email: "clayytonbhig@gmail.com", password: "naisubhig"}, function callbac
 								})
 							}
 	            		}
-		        			
+
 	        			if (event.senderID) {
 					        tracking_data[event.senderID]++;		        	
 				        }
