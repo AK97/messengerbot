@@ -17,25 +17,23 @@ login({email: "clayytonbhig@gmail.com", password: "naisubhig"}, function callbac
       logLevel: "silent"
     });
 
-    var group = '1144974435591141'; //test chat pls ignore
+    var group = '1007807106011631'; //real chat
     api.sendMessage("Enter B H I G", group);
     var roon = '100000921889753'; //roon's user ID
 	var tracking_data = {};
 	var thread_info = {};
-	var deeb = '100003952090241'; //aaron's user ID
+	var deeb = '1683495739'; //deeb's user ID
 	var file_exists = true;
 	try {
 		tracking_data = jsonfile.readFileSync('tracking_data.json');
 	} catch(err) {
 		file_exists = false;
 	}
-	console.log(typeof big_data);
 
     api.getThreadInfo(group, function(err, info) {
     	if (err) return console.error(err);
     	thread_info = info;
     	console.log("Here is info, \n", thread_info);
-    	console.log("here is the participantIDs variable \n", info.participantIDs);
     	if (!file_exists) {
 	    	for (var x in thread_info.participantIDs) {
 	    		var y = thread_info.participantIDs[x];
@@ -43,13 +41,8 @@ login({email: "clayytonbhig@gmail.com", password: "naisubhig"}, function callbac
 	    	}
     	}
 
-	    console.log("tracking_data: ");
-	    var str = JSON.stringify(tracking_data, null, 4); // (Optional) beautiful indented output.
-		console.log(str);
-
 	    var stopListening = api.listen(function(err, event) {
 	        if (err) return console.error(err);
-	        console.log(event);
 	        if (event.threadID == group) {
 	        	switch(event.type) {
 	        		case "message":
@@ -69,7 +62,6 @@ login({email: "clayytonbhig@gmail.com", password: "naisubhig"}, function callbac
 		        					if (err) return console.error(err);
 			        				thread_info = info;
 						        	var output = extend({}, tracking_data);
-						        	console.log(thread_info.nicknames);
 						        	for (var x in thread_info.nicknames) {
 						        		if (x in output) {
 						        			output[thread_info.nicknames[x]] = output[x];
@@ -87,16 +79,16 @@ login({email: "clayytonbhig@gmail.com", password: "naisubhig"}, function callbac
 		        				api.sendMessage({attachment: fs.createReadStream('dab.png')}, group);
 		        			}
 		        			if(input === '/gloriousdawn') {
-		        				api.sendMessage("HO HO HO", group);
-		        					api.changeGroupImage(fs.createReadStream("dab.png"), group, function callback(err) {
-				        				if(err) return console.error(err);
+		        				api.sendMessage("A still more glorious dawn awaits.", group);
+	        					api.changeGroupImage(fs.createReadStream("tyson.jpg"), group, function callback(err) {
+			        				if(err) return console.error(err);
 				    			});
+				    			api.setTitle("THE MOST ASTOUNDING FACT", group, function(err,obj){});
 		        			}
 		        			if(input === '/surendrekt') {
 		        				api.sendMessage("Surendrekt", group);
 		        				api.removeUserFromGroup(roon, group, function callback(err){
 				        			if(err) return console.error(err);
-				        			console.log("removed user from group");
 				    			});
 				    			// setTimeout(api.addUserToGroup(roon, group, function callback(err){
 				    			// 	if (err) return console.error(err);
@@ -127,8 +119,11 @@ login({email: "clayytonbhig@gmail.com", password: "naisubhig"}, function callbac
 	                    		"My sources say no",
 	                    		"Outlook not so good",
 	                    		"Very doubtful"];
-
-		               			api.sendMessage(eightball[Math.floor(Math.random()*20)], group);
+	                    		if (event.senderID == deeb) {
+	                    			api.sendMessage("Debarshi, you bitch", group);
+	                    		} else {
+			               			api.sendMessage(eightball[Math.floor(Math.random()*20)], group);
+	                    		}
 	            			}
 	            			if(input.indexOf("/talk")==0){
 								var talking = input.replace("/talk ","");
