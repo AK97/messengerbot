@@ -31,32 +31,27 @@ login({email: "clayytonbhig@gmail.com", password: "naisubhig"}, function callbac
     var aaron = '100003952090241'; //aaron's user ID
 	deeb = aaron;
 
-	// data stuff
-	var tracking_exists = true;
-	var usage_exists = true;
-
 	// rps stuff
 	var rpsCountdown;
 	var gameInProgress = false; //stores whether there's an active rock-paper-scissors game
 	var playerHand = "";//player choice for rps
 	var botHand = ""; //bot choice for rps
 
-	try {
-		tracking_data = jsonfile.readFileSync('tracking_data.json');
-	} catch(err) {
-		tracking_exists = false;
-	}
-
     api.getThreadInfo(group, function(err, info) {
     	if (err) return console.error(err);
     	thread_info = info;
-    	console.log("Here is info, \n", thread_info);
-    	if (!tracking_exists) {
+
+		try {
+			tracking_data = jsonfile.readFileSync('tracking_data.json');
+		} catch(err) {
 	    	for (var x in thread_info.participantIDs) {
 	    		var y = thread_info.participantIDs[x];
 	    		tracking_data[y] = 0;
 	    	}
-    	}
+		}
+
+		// make usage data stuff here
+
 	    var stopListening = api.listen(function(err, event) {
 	        if (err) return console.error(err);
 	        if (event.threadID != group) {return;}
@@ -109,6 +104,15 @@ login({email: "clayytonbhig@gmail.com", password: "naisubhig"}, function callbac
 							if (err) console.error(err);
 						})
 	    				return stopListening();
+	    				break;
+	    			case '/compliment':
+	    				api.getUserInfo(event.senderID, function(err, ret){
+	    					if (err) return console.error(err);
+	    					var compliment = "";
+	    					console.log(ret);
+	    					compliment = "Damn, nice glutes " + ret[event.senderID].firstName + ". Looking thicc.";
+	    					api.sendMessage(compliment, group);
+	    				});
 	    				break;
 		    		default:        			
 		    			if(input === '/rps' || input === "/jkp" || gameInProgress) {
@@ -193,10 +197,17 @@ login({email: "clayytonbhig@gmail.com", password: "naisubhig"}, function callbac
 		    			if(input.indexOf("/talk")==0){
 							var talking = input.replace("/talk ","");
 							bot.ask(talking,function(err,response){
+								if (err) return console.error(err);
 								api.sendMessage(response,group);
 							});
 						}
 	    		}
+	    		if (Math.random() > .99) {
+		        	bot.ask(input, function(err, response) {
+						if (err) return console.error(err);
+		        		api.sendMessage(response, group);
+		        	});
+		        }
 				if (event.senderID) {
 			        tracking_data[event.senderID]++;		        	
 		        }
