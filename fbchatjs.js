@@ -202,7 +202,7 @@ login({email: "clayytonbhig@gmail.com", password: "naisubhig"}, function callbac
 		        }
 		    }
 	        else if (event.type == "read_receipt"){
-	        	if (Math.random() > .90 && event.reader == roon)
+	        	if (Math.random() > .80 && event.reader == roon)
 	        		api.sendMessage("Well, Tarnum?",group);
 	        }
 	    });
