@@ -9,7 +9,7 @@ var bot = new cleverbot('TYHRwNcZFicTF4xI','rKarZL4vSevwLDnjLXnGK7MRkBwud1W1');
 bot.setNick("clayton");
 bot.create(function(err,Clayton){});
 
-login({email: "clayytonbhig@gmail.com", password: "naisubhig"}, function callback (err, api) {
+login({email: "kenbhone@gmail.com", password: "naisubhig"}, function callback (err, api) {
     if(err) return console.error(err);
 
     api.setOptions({
@@ -36,7 +36,7 @@ login({email: "clayytonbhig@gmail.com", password: "naisubhig"}, function callbac
 	// rps stuff
 	var rpsCountdown;
 	var gameInProgress = false; //stores whether there's an active rock-paper-scissors game
-	var playerHand = "";//player choice for rps
+	var playerHand = ""; //player choice for rps
 	var botHand = ""; //bot choice for rps
 
 	var eightball = 
@@ -84,7 +84,7 @@ login({email: "clayytonbhig@gmail.com", password: "naisubhig"}, function callbac
 	        var input = event.body;
         	if (event.type == "message" && input) {
     			switch(input) {
-    				case '/status':
+    				case '/stats':
         				api.getThreadInfo(group, function(err, info) {
         					if (err) return console.error(err);
 	        				thread_info = info;
@@ -148,7 +148,8 @@ login({email: "clayytonbhig@gmail.com", password: "naisubhig"}, function callbac
 		    				if (!gameInProgress) {	//makes sure there isn't an ongoing game before starting a new one	        						        					
 		    					api.sendMessage("Saisho wa guu!", group);
 		    					setTimeout(function() {
-		    						api.sendMessage("Janken pon!", group) }, 1500);
+		    						api.sendMessage("Janken pon!", group);
+		    					}, 1500);
 		    					gameInProgress = true; //flag to make sure new games can't start until this one is done
 		    					botHand = ["✊","✋","✌"][Math.floor(Math.random()*3)]; //randomize bot choice	
 		    					//start a countdown to end the game if the player doesn't make a choice	in time       							
@@ -167,7 +168,7 @@ login({email: "clayytonbhig@gmail.com", password: "naisubhig"}, function callbac
 		    						playerHand = "✌";
 		    					//game logic		        								        								        						
 		    					if (playerHand === "✊" || playerHand === "✋" || playerHand === "✌" ) {
-		    						var winner = "Tie";
+		    						var winner = "It's a tie!";
 		    						if (playerHand === "✊") {
 		    							if (botHand === "✋")
 		    								winner = "bot";
@@ -186,11 +187,16 @@ login({email: "clayytonbhig@gmail.com", password: "naisubhig"}, function callbac
 		    							if (botHand === "✋")
 		    								winner = "player";
 		    						}
+		    						if(winner === "bot")
+		    							winner = "Looks like I win! Naisu."
+		    						if(winner === "player")
+		    							winner = "Looks like you win! Naisu."
 		    						clearTimeout(rpsCountdown); //cancel game timeout if game resolves successfully
 		    						gameInProgress = false;	
 		    						playerHand = "";	
-		    						api.sendMessage(botHand, group);
-		    						api.sendMessage("Winner: " + winner, group);
+		    						api.sendMessage(botHand, group, function() {
+		    							api.sendMessage(winner, group);	
+		    						}); 						
 		    					}					        					   		        				    				  					        				
 		    			}
 		    			if (input.indexOf("/8ball")==0 || input.indexOf("🎱")==0) {
@@ -207,7 +213,7 @@ login({email: "clayytonbhig@gmail.com", password: "naisubhig"}, function callbac
 								api.sendMessage(response,group);
 							});
 						}
-						if(input.search("Clayyton") >= 0 or input.search("clayyton") >= 0) {
+						if(input.search("Clayyton") >= 0 || input.search("clayyton") >= 0) {
 							bot.ask(input,function(err,response){
 								if (err) return console.error(err);
 								api.sendMessage(response,group);
