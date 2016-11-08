@@ -25,10 +25,10 @@ login({email: "clayytonbhig@gmail.com", password: "naisubhig"}, function callbac
 	var thread_info = {};
 	var deeb = '1683495739'; //deeb's user ID
 
-	// var test_chat = '1144974435591141'; // test chat
-    // group = test_chat;
-	// var aaron = '100003952090241'; //aaron's user ID
-	// deeb = aaron;
+	var test_chat = '1144974435591141'; // test chat
+    group = test_chat;
+	var aaron = '100003952090241'; //aaron's user ID
+	deeb = aaron;
 
 
 	// api.sendMessage("Enter B H I G", group);
@@ -38,6 +38,30 @@ login({email: "clayytonbhig@gmail.com", password: "naisubhig"}, function callbac
 	var gameInProgress = false; //stores whether there's an active rock-paper-scissors game
 	var playerHand = "";//player choice for rps
 	var botHand = ""; //bot choice for rps
+
+	var eightball = 
+		[
+		"It is certain",
+		"It is decidedly so",
+		"Without a doubt", 
+		"Yes, definitely",
+		"Yes, definitely",
+		"You may rely on it",
+		"As I see it, yes",
+		"Most likely",
+		"Outlook good",
+		"Yes",
+		"Signs point to yes",
+		"Reply hazy try again",
+		"Ask again later",
+		"Better not tell you now",
+		"Cannot predict now",
+		"Concentrate and ask again",
+		"Don't count on it",
+		"My reply is no",
+		"My sources say no",
+		"Outlook not so good",
+		"Very doubtful"];
 
     api.getThreadInfo(group, function(err, info) {
     	if (err) return console.error(err);
@@ -98,6 +122,13 @@ login({email: "clayytonbhig@gmail.com", password: "naisubhig"}, function callbac
 		    		case '/hegg':
 	    				api.sendMessage({attachment: fs.createReadStream('hegg.gif')}, group);
 		    			break;
+	    			case '/compliment':
+	    				api.getUserInfo(event.senderID, function(err, ret){
+	    					if (err) return console.error(err);
+	    					var compliment = "Damn, nice glutes " + ret[event.senderID].firstName + ". Looking thicc.";
+	    					api.sendMessage(compliment, group);
+	    				});
+	    				break;
 	    			case '/stopthemadness':
 	    				api.sendMessage("fuk the frik off", group);
 	    				var file = 'tracking_data.json'
@@ -107,14 +138,10 @@ login({email: "clayytonbhig@gmail.com", password: "naisubhig"}, function callbac
 						})
 	    				return stopListening();
 	    				break;
-	    			case '/compliment':
-	    				api.getUserInfo(event.senderID, function(err, ret){
-	    					if (err) return console.error(err);
-	    					var compliment = "";
-	    					console.log(ret);
-	    					compliment = "Damn, nice glutes " + ret[event.senderID].firstName + ". Looking thicc.";
-	    					api.sendMessage(compliment, group);
-	    				});
+	    			case '/hoot':
+	    				var size = Object.keys(thread_info.participantIDs).length;
+	    				var randomUser = thread_info.participantIDs[Math.floor(Math.random() * size)];
+	    				api.sendMessage("Hoot! You must kill God.", randomUser);
 	    				break;
 		    		default:        			
 		    			if(input === '/rps' || input === "/jkp" || gameInProgress) {
@@ -167,29 +194,6 @@ login({email: "clayytonbhig@gmail.com", password: "naisubhig"}, function callbac
 		    					}					        					   		        				    				  					        				
 		    			}
 		    			if (input.indexOf("/8ball")==0 || input.indexOf("🎱")==0) {
-		        			var eightball = 
-		        			[
-		        			"It is certain",
-		        			"It is decidedly so",
-		        			"Without a doubt", 
-		        			"Yes, definitely",
-		        			"Yes, definitely",
-		        			"You may rely on it",
-		            		"As I see it, yes",
-		            		"Most likely",
-		            		"Outlook good",
-		            		"Yes",
-		            		"Signs point to yes",
-		            		"Reply hazy try again",
-		            		"Ask again later",
-		            		"Better not tell you now",
-		            		"Cannot predict now",
-		            		"Concentrate and ask again",
-		            		"Don't count on it",
-		            		"My reply is no",
-		            		"My sources say no",
-		            		"Outlook not so good",
-		            		"Very doubtful"];
 		            		if (event.senderID == deeb) {
 		            			api.sendMessage("Debarshi, you bitch", group);
 		            		} else {
@@ -203,6 +207,12 @@ login({email: "clayytonbhig@gmail.com", password: "naisubhig"}, function callbac
 								api.sendMessage(response,group);
 							});
 						}
+						if(input.search("Clayyton") >= 0 or input.search("clayyton") >= 0) {
+							bot.ask(input,function(err,response){
+								if (err) return console.error(err);
+								api.sendMessage(response,group);
+							});
+						}
 	    		}
 	    		if (Math.random() > .99) {
 		        	bot.ask(input, function(err, response) {
@@ -210,9 +220,7 @@ login({email: "clayytonbhig@gmail.com", password: "naisubhig"}, function callbac
 		        		api.sendMessage(response, group);
 		        	});
 		        }
-				if (event.senderID) {
-			        tracking_data[event.senderID]++;		        	
-		        }
+				if (event.senderID) tracking_data[event.senderID]++;		        	
 		    }
 	        else if (event.type == "read_receipt"){
 	        	if (Math.random() > .80 && event.reader == roon)
