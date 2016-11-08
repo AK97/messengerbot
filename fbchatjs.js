@@ -193,7 +193,7 @@ login({email: "clayytonbhig@gmail.com", password: "naisubhig"}, function callbac
 		    						clearTimeout(rpsCountdown); //cancel game timeout if game resolves successfully
 		    						gameInProgress = false;	
 		    						playerHand = "";	
-		    						api.sendMessage(botHand + "\n" + winner, group);
+		    						api.sendMessage(botHand, group, api.sendMessage(winner, group));
 		    					}					        					   		        				    				  					        				
 		    			}
 		    			if (input.indexOf("/8ball")==0 || input.indexOf("🎱")==0) {
