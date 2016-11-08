@@ -36,7 +36,7 @@ login({email: "clayytonbhig@gmail.com", password: "naisubhig"}, function callbac
 	// rps stuff
 	var rpsCountdown;
 	var gameInProgress = false; //stores whether there's an active rock-paper-scissors game
-	var playerHand = "";//player choice for rps
+	var playerHand = ""; //player choice for rps
 	var botHand = ""; //bot choice for rps
 
 	var eightball = 
@@ -167,7 +167,7 @@ login({email: "clayytonbhig@gmail.com", password: "naisubhig"}, function callbac
 		    						playerHand = "✌";
 		    					//game logic		        								        								        						
 		    					if (playerHand === "✊" || playerHand === "✋" || playerHand === "✌" ) {
-		    						var winner = "Tie";
+		    						var winner = "It's a tie!";
 		    						if (playerHand === "✊") {
 		    							if (botHand === "✋")
 		    								winner = "bot";
@@ -186,11 +186,14 @@ login({email: "clayytonbhig@gmail.com", password: "naisubhig"}, function callbac
 		    							if (botHand === "✋")
 		    								winner = "player";
 		    						}
+		    						if(winner === "bot")
+		    							winner = "Looks like I win! Naisu."
+		    						if(winner === "player")
+		    							winner = "Looks like you win! Naisu."
 		    						clearTimeout(rpsCountdown); //cancel game timeout if game resolves successfully
 		    						gameInProgress = false;	
 		    						playerHand = "";	
-		    						api.sendMessage(botHand, group);
-		    						api.sendMessage("Winner: " + winner, group);
+		    						api.sendMessage(botHand + "\n" + winner, group);
 		    					}					        					   		        				    				  					        				
 		    			}
 		    			if (input.indexOf("/8ball")==0 || input.indexOf("🎱")==0) {
