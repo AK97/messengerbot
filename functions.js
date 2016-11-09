@@ -91,12 +91,12 @@ module.exports = {
 			});
 	},	
 	jankenPon: function(api, group, input) {
-		if (!gameInProgress) {	//makes sure there isn't an ongoing game before starting a new one	        						        					
+		if ((input === "/rps" || input === '/jkp') && !gameInProgress) { //check for existing game before starting a new one	        						        					
 		    api.sendMessage("Saisho wa guu!", group);
 		    setTimeout(function() {
 		    	api.sendMessage("Janken pon!", group);
 		    }, 1500);
-		    gameInProgress = true; //flag to make sure new games can't start until this one is done
+		    gameInProgress = true; //flag to indicate ongoing game
 		    botHand = ["✊","✋","✌"][Math.floor(Math.random()*3)]; //randomize bot choice	
 		    //start a countdown to end the game if the player doesn't make a choice	in time       							
 		    rpsCountdown = setTimeout(function() { 	        					
@@ -105,44 +105,51 @@ module.exports = {
 			}, 10000);
 			return;
 		}
-		//set playerHand as per valid user input
-		if(input === '/rock' || input === "/guu" || input === "✊") 
-		    playerHand = "✊";       								        						        					
-		if(input === '/paper' || input === "/paa" || input === "✋") 
-		    playerHand = "✋";  			        								        						        					
-		if(input === '/scissors' || input === "/choki" || input === "✌") 
-		    playerHand = "✌";
-		//game logic		        								        								        						
-		if (playerHand === "✊" || playerHand === "✋" || playerHand === "✌" ) {
-		    var winner = "It's a tie!";
-		    if (playerHand === "✊") {
-		    	if (botHand === "✋")
-		    		winner = "bot";
-		    	if (botHand === "✌")
-		    		winner = "player";
-		    }
-		    if (playerHand === "✋") {		        							
-		    	if (botHand === "✌")
-		    		winner = "bot";
-		    	if (botHand === "✊")
-		    		winner = "player";
-		    }
-		    if (playerHand === "✌") {
-		    	if (botHand === "✊")
-		    		winner = "bot";
-		    	if (botHand === "✋")
-		    		winner = "player";
-		    }
-		    if(winner === "bot")
-		    	winner = "Looks like I win! Naisu."
-		    if(winner === "player")
-		    	winner = "Looks like you win! Naisu."
-		    clearTimeout(rpsCountdown); //cancel game timeout if game resolves successfully
-		    gameInProgress = false;	
-		    playerHand = "";	
-		    api.sendMessage(botHand, group, function() {
-		    	api.sendMessage(winner, group);	
-		    }); 						
+		if (gameInProgress) {
+			//set playerHand as per valid user input
+			switch (input) { 
+				case '/rock': case '/guu': case '✊':
+			    	playerHand = "✊";      
+			    	break; 								        						        					
+				case '/paper': case "/paa": case "✋":
+			    	playerHand = "✋"; 
+			    	break; 			        								        						        					
+				case '/scissors': case "/choki": case "✌":
+			    	playerHand = "✌";
+			    	break;
+			}
+			//game logic		        								        								        						
+			if (playerHand === "✊" || playerHand === "✋" || playerHand === "✌" ) {
+			    var winner = "It's a tie!";
+			    if (playerHand === "✊") {
+			    	if (botHand === "✋")
+			    		winner = "bot";
+			    	if (botHand === "✌")
+			    		winner = "player";
+			    }
+			    if (playerHand === "✋") {		        							
+			    	if (botHand === "✌")
+			    		winner = "bot";
+			    	if (botHand === "✊")
+			    		winner = "player";
+			    }
+			    if (playerHand === "✌") {
+			    	if (botHand === "✊")
+			    		winner = "bot";
+			    	if (botHand === "✋")
+			    		winner = "player";
+			    }
+			    if(winner === "bot")
+			    	winner = "Looks like I win! Naisu."
+			    if(winner === "player")
+			    	winner = "Looks like you win! Naisu."
+		    	clearTimeout(rpsCountdown); //cancel game timeout if game resolves successfully
+		    	gameInProgress = false;	
+		    	playerHand = "";	
+		    	api.sendMessage(botHand, group, function() {
+		    		api.sendMessage(winner, group);	
+		   		}); 	
+			}					
 		}	
 	}
 }

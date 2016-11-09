@@ -4,7 +4,7 @@ var jsonfile = require('jsonfile');
 var extend = require('util')._extend;
 var functions = require('./functions');
 
-login({email: "kenbhone@gmail.com", password: "naisubhig"}, function callback (err, api) {
+login({email: "kenbhone@gmail.com", password: "naisubhig"}, function callback(err, api) {
     if(err) return console.error(err);
 
     api.setOptions({
@@ -23,38 +23,38 @@ login({email: "kenbhone@gmail.com", password: "naisubhig"}, function callback (e
 	deeb = aaron;
 
 	//data stuff
-	var tracking_data = {};
+	var trackingData = {};
 	var usageData = {};
 	var threadInfo = {};
 
 	// api.sendMessage("Enter B H I G", group);	
 
-    api.getThreadInfo(group, function(err, info) {
+    api.getThreadInfo(group, function callback(err, info) {
     	if (err) return console.error(err);
     	threadInfo = info;
 
 		try {
-			tracking_data = jsonfile.readFileSync('tracking_data.json');
+			trackingData = jsonfile.readFileSync('tracking_data.json');
 		} catch(err) {
 	    	for (var x in threadInfo.participantIDs) {
 	    		var y = threadInfo.participantIDs[x];
-	    		tracking_data[y] = 0;
+	    		trackingData[y] = 0;
 	    	}
 		}
 
 		// make usage data stuff here
 
-	    var stopListening = api.listen(function(err, event) {
+	    var stopListening = api.listen(function callback(err, event) {
 	        if (err) return console.error(err);
 	        if (event.threadID != group) {return;}
 	        var input = event.body;
         	if (event.type == "message" && input) {
     			switch(input) {
     				case '/stats':
-        				api.getThreadInfo(group, function(err, info) {
+        				api.getThreadInfo(group, function callback(err, info) {
         					if (err) return console.error(err);
 	        				threadInfo = info;
-				        	var output = extend({}, tracking_data);
+				        	var output = extend({}, trackingData);
 				        	for (var x in threadInfo.nicknames) {
 				        		if (x in output) {
 				        			output[threadInfo.nicknames[x]] = output[x];
@@ -90,7 +90,7 @@ login({email: "kenbhone@gmail.com", password: "naisubhig"}, function callback (e
 	    				api.sendMessage("fuk the frik off", group);
 	    				var file = 'tracking_data.json'
 						 
-						jsonfile.writeFile(file, tracking_data, function (err) {
+						jsonfile.writeFile(file, trackingData, function (err) {
 							if (err) console.error(err);
 						})
 	    				return stopListening();
@@ -99,6 +99,9 @@ login({email: "kenbhone@gmail.com", password: "naisubhig"}, function callback (e
 	    				functions.hoot(api, group, threadInfo)
 	    				break;       			
 		    		case '/rps': case '/jkp':
+		    		case '/rock': case '/guu': case '✊':			    							        						        					
+					case '/paper': case "/paa": case "✋":			    				        								        						        					
+					case '/scissors': case "/choki": case "✌":			    	
 		    			functions.jankenPon(api, group, input);			    				  					        				
 		    			break;
 		    		default:  
@@ -107,12 +110,12 @@ login({email: "kenbhone@gmail.com", password: "naisubhig"}, function callback (e
 		    			else if(input.indexOf("/talk")==0) 
 		    				functions.talk(api, group, input.replace("/talk ",""));						
 						else if(input.search("Clayyton") >= 0 || input.search("clayyton") >= 0) 
-							functions.talk(api, group, input);						
+							functions.talk(api, group, input);
 	    		}	    
 
 	    		if (Math.random() > .99) 
 		        	functions.talk(api, group, input);		        
-				if (event.senderID) tracking_data[event.senderID]++;		        	
+				if (event.senderID) trackingData[event.senderID]++;		        	
 		    }
 
 	        else if (event.type == "read_receipt"){
