@@ -3,7 +3,7 @@ const fs = require("fs");
 var cleverbot = require('cleverbot.io');
 var jsonfile = require('jsonfile');
 var extend = require('util')._extend;
-
+var functions = require('./functions');
 
 var bot = new cleverbot('TYHRwNcZFicTF4xI','rKarZL4vSevwLDnjLXnGK7MRkBwud1W1');
 bot.setNick("clayton");
@@ -21,12 +21,12 @@ login({email: "kenbhone@gmail.com", password: "naisubhig"}, function callback (e
     var roon = '100000921889753'; //roon's user ID
     var pio = '100006115174010'; //pio's user ID
 	var tracking_data = {};
-	var usage_data = {};
-	var thread_info = {};
+	var usageData = {};
+	var threadInfo = {};
 	var deeb = '1683495739'; //deeb's user ID
 
-	var test_chat = '1144974435591141'; // test chat
-    group = test_chat;
+	var testChat = '1144974435591141'; // test chat
+    group = testChat;
 	var aaron = '100003952090241'; //aaron's user ID
 	deeb = aaron;
 
@@ -65,13 +65,13 @@ login({email: "kenbhone@gmail.com", password: "naisubhig"}, function callback (e
 
     api.getThreadInfo(group, function(err, info) {
     	if (err) return console.error(err);
-    	thread_info = info;
+    	threadInfo = info;
 
 		try {
 			tracking_data = jsonfile.readFileSync('tracking_data.json');
 		} catch(err) {
-	    	for (var x in thread_info.participantIDs) {
-	    		var y = thread_info.participantIDs[x];
+	    	for (var x in threadInfo.participantIDs) {
+	    		var y = threadInfo.participantIDs[x];
 	    		tracking_data[y] = 0;
 	    	}
 		}
@@ -87,11 +87,11 @@ login({email: "kenbhone@gmail.com", password: "naisubhig"}, function callback (e
     				case '/stats':
         				api.getThreadInfo(group, function(err, info) {
         					if (err) return console.error(err);
-	        				thread_info = info;
+	        				threadInfo = info;
 				        	var output = extend({}, tracking_data);
-				        	for (var x in thread_info.nicknames) {
+				        	for (var x in threadInfo.nicknames) {
 				        		if (x in output) {
-				        			output[thread_info.nicknames[x]] = output[x];
+				        			output[threadInfo.nicknames[x]] = output[x];
 									delete output[x];
 				        		}
 				        	}
@@ -100,34 +100,22 @@ login({email: "kenbhone@gmail.com", password: "naisubhig"}, function callback (e
         				});
         				break;
         			case '/kukup':	        			
-        				api.sendMessage("HO HO HO", group);
-        				api.changeNickname("Bhuge Dumbass", group, deeb);
+        				functions.kukup(api, group, deeb);
         				break;
         			case '/dab':
-        				api.sendMessage({attachment: fs.createReadStream('dab.png')}, group);
+        				functions.dab(api, group);
     					break;
     			    case '/gloriousdawn':
-	    				api.sendMessage("A still more glorious dawn awaits.", group);
-						api.changeGroupImage(fs.createReadStream("tyson.jpg"), group, function callback(err) {
-	        				if(err) return console.error(err);
-		    			});
-		    			api.setTitle("THE MOST ASTOUNDING FACT", group, function(err,obj){});
+	    				functions.gloriousDawn(api, group);
 		    			break;
     				case '/surendrekt':
-	    				api.sendMessage("Surendrekt", group);
-	    				api.removeUserFromGroup(roon, group, function callback(err){
-		        			if(err) return console.error(err);
-		    			});
+	    				functions.surendrekt(api, group, roon);
 		    			break;
 		    		case '/hegg':
-	    				api.sendMessage({attachment: fs.createReadStream('hegg.gif')}, group);
+	    				functions.hegg(api, group);
 		    			break;
 	    			case '/compliment':
-	    				api.getUserInfo(event.senderID, function(err, ret){
-	    					if (err) return console.error(err);
-	    					var compliment = "Damn, nice glutes " + ret[event.senderID].firstName + ". Looking thicc.";
-	    					api.sendMessage(compliment, group);
-	    				});
+	    				functions.compliment(api, group, event)
 	    				break;
 	    			case '/stopthemadness':
 	    				api.sendMessage("fuk the frik off", group);
@@ -139,9 +127,7 @@ login({email: "kenbhone@gmail.com", password: "naisubhig"}, function callback (e
 	    				return stopListening();
 	    				break;
 	    			case '/hoot':
-	    				var size = Object.keys(thread_info.participantIDs).length;
-	    				var randomUser = thread_info.participantIDs[Math.floor(Math.random() * size)];
-	    				api.sendMessage("Hoot! You must kill God.", randomUser);
+	    				functions.hoot(api, group, threadInfo)
 	    				break;
 		    		default:        			
 		    			if(input === '/rps' || input === "/jkp" || gameInProgress) {
