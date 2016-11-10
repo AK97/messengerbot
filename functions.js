@@ -9,35 +9,38 @@ var bot = new cleverbot('TYHRwNcZFicTF4xI','rKarZL4vSevwLDnjLXnGK7MRkBwud1W1');
 bot.setNick("clayton");
 bot.create(function(err,Clayton){});
 
-// rps stuff
+//rps stuff
 var rpsCountdown;
-var gameInProgress = false; //stores whether there's an active rock-paper-scissors game
-var playerHand = ""; //player choice for rps
-var botHand = ""; //bot choice for rps
+var gameInProgress = false; //stores if there's an active rps game
+var playerOne = "";
+var playerTwo = "";
+var playerOneHand = ""; //player one choice for rps
+var playerTwoHand = ""; //player two choice for rps (defaults to bot)
 
 var eightball = 
 		[
-		"It is certain",
-		"It is decidedly so",
-		"Without a doubt", 
-		"Yes, definitely",
-		"Yes, definitely",
-		"You may rely on it",
-		"As I see it, yes",
-		"Most likely",
-		"Outlook good",
-		"Yes",
-		"Signs point to yes",
-		"Reply hazy try again",
-		"Ask again later",
-		"Better not tell you now",
-		"Cannot predict now",
-		"Concentrate and ask again",
-		"Don't count on it",
-		"My reply is no",
-		"My sources say no",
-		"Outlook not so good",
-		"Very doubtful"];
+			"It is certain",
+			"It is decidedly so",
+			"Without a doubt", 
+			"Yes, definitely",
+			"Yes, definitely",
+			"You may rely on it",
+			"As I see it, yes",
+			"Most likely",
+			"Outlook good",
+			"Yes",
+			"Signs point to yes",
+			"Reply hazy try again",
+			"Ask again later",
+			"Better not tell you now",
+			"Cannot predict now",
+			"Concentrate and ask again",
+			"Don't count on it",
+			"My reply is no",
+			"My sources say no",
+			"Outlook not so good",
+			"Very doubtful"
+		];
 
 module.exports = {
 	kukUp: function(api, group, deeb) {
@@ -49,10 +52,14 @@ module.exports = {
 	},
 	gloriousDawn: function(api, group) {
 		api.sendMessage("A still more glorious dawn awaits.", group);
-		api.changeGroupImage(fs.createReadStream("tyson.jpg"), group, function callback(err) {
-	   		if(err) return console.error(err);
-	   	});
-		api.setTitle("THE MOST ASTOUNDING FACT", group, function callback(err,obj){});
+		api.changeGroupImage(fs.createReadStream("tyson.jpg"), group,
+		function callback(err) {
+			if(err) return console.error(err);
+		});
+		api.setTitle("THE MOST ASTOUNDING FACT", group, 
+		function callback(err,obj) {
+			if(err) return console.error(err);
+		});
 	},
 	surendrekt: function(api, group, roon) {
 		api.sendMessage("Surendrekt", group);
@@ -69,7 +76,8 @@ module.exports = {
 	compliment: function(api, group, messageEvent) {
 		api.getUserInfo(messageEvent.senderID, function(err, ret) {
 	    	if (err) return console.error(err);
-	    	var compliment = "Damn, nice glutes " + ret[messageEvent.senderID].firstName + ". Looking thicc.";
+	    	var compliment = "Damn, nice glutes " + 
+	    	ret[messageEvent.senderID].firstName + ". Looking thicc.";
 	    	api.sendMessage(compliment, group);
 	    });
 	},
@@ -90,53 +98,54 @@ module.exports = {
 				api.sendMessage(response,group);
 			});
 	},	
-	jankenPon: function(api, group, input) {
-		if ((input === "/rps" || input === '/jkp') && !gameInProgress) { //check for existing game before starting a new one	        						        					
+	jankenPon: function(api, group, challenger) {
+		if (!gameInProgress) { //check for existing game before starting a new one	        						        					
 		    api.sendMessage("Saisho wa guu!", group);
 		    setTimeout(function() {
 		    	api.sendMessage("Janken pon!", group);
 		    }, 1500);
-		    gameInProgress = true; //flag to indicate ongoing game
-		    botHand = ["✊","✋","✌"][Math.floor(Math.random()*3)]; //randomize bot choice	
-		    //start a countdown to end the game if the player doesn't make a choice	in time       							
+		    gameInProgress = true; //flag to indicate ongoing game	
+		    playerOne = challenger;    
+		    //start a countdown to end game if a choice	isn't made in time       							
 		    rpsCountdown = setTimeout(function() { 	        					
 			   	console.log("Game timed out"); 		        						        					
 			   	gameInProgress = false;
 			}, 10000);
-			return;
 		}
-		if (gameInProgress) {
-			//set playerHand as per valid user input
+	},
+	jankenPonParser: function(api, group, input) { //parses for valid player input
+		if (gameInProgress) {			
 			switch (input) { 
 				case '/rock': case '/guu': case '✊':
-			    	playerHand = "✊";      
+			    	playerOneHand = "✊";      
 			    	break; 								        						        					
 				case '/paper': case "/paa": case "✋":
-			    	playerHand = "✋"; 
+			    	playerOneHand = "✋"; 
 			    	break; 			        								        						        					
 				case '/scissors': case "/choki": case "✌":
-			    	playerHand = "✌";
+			    	playerOneHand = "✌";
 			    	break;
 			}
+			playerTwoHand = ["✊","✋","✌"][Math.floor(Math.random()*3)]; //randomize bot choice	
 			//game logic		        								        								        						
-			if (playerHand === "✊" || playerHand === "✋" || playerHand === "✌" ) {
+			if (playerOneHand !=="") {
 			    var winner = "It's a tie!";
-			    if (playerHand === "✊") {
-			    	if (botHand === "✋")
+			    if (playerOneHand === "✊") {
+			    	if (playerTwoHand === "✋")
 			    		winner = "bot";
-			    	if (botHand === "✌")
+			    	if (playerTwoHand === "✌")
 			    		winner = "player";
 			    }
-			    if (playerHand === "✋") {		        							
-			    	if (botHand === "✌")
+			    if (playerOneHand === "✋") {		        							
+			    	if (playerTwoHand === "✌")
 			    		winner = "bot";
-			    	if (botHand === "✊")
+			    	if (playerTwoHand === "✊")
 			    		winner = "player";
 			    }
-			    if (playerHand === "✌") {
-			    	if (botHand === "✊")
+			    if (playerOneHand === "✌") {
+			    	if (playerTwoHand === "✊")
 			    		winner = "bot";
-			    	if (botHand === "✋")
+			    	if (playerTwoHand === "✋")
 			    		winner = "player";
 			    }
 			    if(winner === "bot")
@@ -145,8 +154,9 @@ module.exports = {
 			    	winner = "Looks like you win! Naisu."
 		    	clearTimeout(rpsCountdown); //cancel game timeout if game resolves successfully
 		    	gameInProgress = false;	
-		    	playerHand = "";	
-		    	api.sendMessage(botHand, group, function() {
+		    	playerOneHand = "";
+		    	playerTwoHand = "";	
+		    	api.sendMessage(playerTwoHand, group, function() {
 		    		api.sendMessage(winner, group);	
 		   		}); 	
 			}					

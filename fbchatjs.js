@@ -99,10 +99,12 @@ login({email: "kenbhone@gmail.com", password: "naisubhig"}, function callback(er
 	    				functions.hoot(api, group, threadInfo)
 	    				break;       			
 		    		case '/rps': case '/jkp':
+		    			functions.jankenPon(api, group, event.senderID);			    				  					        				
+		    			break;
 		    		case '/rock': case '/guu': case '✊':			    							        						        					
 					case '/paper': case "/paa": case "✋":			    				        								        						        					
 					case '/scissors': case "/choki": case "✌":			    	
-		    			functions.jankenPon(api, group, input);			    				  					        				
+		    			functions.jankenPonParser(api, group, input);			    				  					        				
 		    			break;
 		    		default:  
 		    			if (input.indexOf("/8ball")==0 || input.indexOf("🎱")==0) 
@@ -115,7 +117,8 @@ login({email: "kenbhone@gmail.com", password: "naisubhig"}, function callback(er
 
 	    		if (Math.random() > .99) 
 		        	functions.talk(api, group, input);		        
-				if (event.senderID) trackingData[event.senderID]++;		        	
+				if (event.senderID) 
+					trackingData[event.senderID]++;		        	
 		    }
 
 	        else if (event.type == "read_receipt"){
