@@ -47,12 +47,12 @@ module.exports = {
 		api.sendMessage("HO HO HO", group);
         api.changeNickname("Bhuge Dumbass", group, deeb);
 	},
-	dab: function(api, group) {
-		api.sendMessage({attachment: fs.createReadStream('dab.png')}, group);
+	whip: function(api, group) {
+		api.sendMessage({attachment: fs.createReadStream('assets/dab.png')}, group);
 	},
 	gloriousDawn: function(api, group) {
 		api.sendMessage("A still more glorious dawn awaits.", group);
-		api.changeGroupImage(fs.createReadStream("tyson.jpg"), group,
+		api.changeGroupImage(fs.createReadStream("assets/tyson.jpg"), group,
 		function callback(err) {
 			if(err) return console.error(err);
 		});
@@ -68,13 +68,13 @@ module.exports = {
 		});
 	},
 	hegg: function(api, group) {
-		api.sendMessage({attachment: fs.createReadStream('hegg.gif')}, group);
+		api.sendMessage({attachment: fs.createReadStream('assets/hegg.gif')}, group);
 	},
 	ecksDee: function(api, group) {
 		api.sendMessage("😂🔫", group);
 	},
 	compliment: function(api, group, messageEvent) {
-		api.getUserInfo(messageEvent.senderID, function(err, ret) {
+		api.getUserInfo(messageEvent.senderID, function callback(err, ret) {
 	    	if (err) return console.error(err);
 	    	var compliment = "Damn, nice glutes " + 
 	    	ret[messageEvent.senderID].firstName + ". Looking thicc.";
@@ -93,9 +93,9 @@ module.exports = {
 			api.sendMessage(eightball[Math.floor(Math.random()*20)], group);		
 	},	
 	talk: function(api, group, input) {
-		bot.ask(input,function(err,response){
+		bot.ask(input, function callback(err,response) {
 			if (err) return console.error(err);
-				api.sendMessage(response,group);
+			api.sendMessage(response,group);
 			});
 	},	
 	jankenPon: function(api, group, challenger) {
@@ -113,7 +113,7 @@ module.exports = {
 			}, 10000);
 		}
 	},
-	jankenPonParser: function(api, group, input) { //parses for valid player input
+	jankenPonParse: function(api, group, input) { //parses for valid player input
 		if (gameInProgress) {			
 			switch (input) { 
 				case '/rock': case '/guu': case '✊':
@@ -153,7 +153,7 @@ module.exports = {
 			    if(winner === "player")
 			    	winner = "Looks like you win! Naisu."
 		    	clearTimeout(rpsCountdown); //cancel game timeout if game resolves successfully
-		    	api.sendMessage(playerTwoHand, group, function() {
+		    	api.sendMessage(playerTwoHand, group, function callback() {
 		    		api.sendMessage(winner, group);	
 		   		}); 	
 		   		gameInProgress = false;
