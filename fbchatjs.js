@@ -9,7 +9,7 @@ var bot = new cleverbot('TYHRwNcZFicTF4xI','rKarZL4vSevwLDnjLXnGK7MRkBwud1W1');
 bot.setNick("clayton");
 bot.create(function(err,Clayton){});
 
-login({email: "clayytonbhig@gmail.com", password: "naisubhig"}, function callback (err, api) {
+login({email: "kenbhone@gmail.com", password: "naisubhig"}, function callback (err, api) {
     if(err) return console.error(err);
 
     api.setOptions({
@@ -35,7 +35,7 @@ login({email: "clayytonbhig@gmail.com", password: "naisubhig"}, function callbac
 	// rps stuff
 	var rpsCountdown;
 	var gameInProgress = false; //stores whether there's an active rock-paper-scissors game
-	var playerHand = "";//player choice for rps
+	var playerHand = ""; //player choice for rps
 	var botHand = ""; //bot choice for rps
 
 	var eightball = 
@@ -90,7 +90,7 @@ login({email: "clayytonbhig@gmail.com", password: "naisubhig"}, function callbac
 	        var cases = true;
         	if (event.type == "message" && input) {
     			switch(input) {
-    				case '/status':
+    				case '/stats':
         				api.getThreadInfo(group, function(err, info) {
         					if (err) return console.error(err);
 				        	var output = extend({}, tracking_data);
@@ -218,13 +218,18 @@ login({email: "clayytonbhig@gmail.com", password: "naisubhig"}, function callbac
 	    							if (botHand === "✋")
 	    								winner = "player";
 	    						}
+	    						if(winner === "bot")
+	    							winner = "Looks like I win! Naisu."
+	    						if(winner === "player")
+	    							winner = "Looks like you win! Naisu."	    						
 	    						clearTimeout(rpsCountdown); //cancel game timeout if game resolves successfully
-	    						gameInProgress = false;	
-	    						playerHand = "";	
-	    						api.sendMessage(botHand, group);
-	    						api.sendMessage("Winner: " + winner, group);
+		    						gameInProgress = false;	
+		    						playerHand = "";	
+		    						api.sendMessage(botHand, group, function() {
+		    							api.sendMessage(winner, group);	
+		    						}); 						
+		    					}		
 			    			}						        					   		        				    				  					        				
-		    			}
 		    			if (input.indexOf("/8ball")==0 || input.indexOf("🎱")==0) {
 		            		if (event.senderID == deeb) {
 		            			api.sendMessage("Debarshi, you bitch", group);
@@ -241,6 +246,7 @@ login({email: "clayytonbhig@gmail.com", password: "naisubhig"}, function callbac
 							});
 		            		if (usage_data['/talk']) usage_data['/talk']++; else usage_data['/talk'] = 1;
 						}
+
 						else if(input.search("Clayyton") >= 0 || input.search("clayyton") >= 0) {
 							var talking = input.replace("Clayyton","");
 							talking = talking.replace("clayyton","");
