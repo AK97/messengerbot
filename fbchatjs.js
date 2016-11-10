@@ -30,7 +30,6 @@ login({email: "kenbhone@gmail.com", password: "naisubhig"}, function callback(er
 
     api.getThreadInfo(group, function callback(err, info) {
     	if (err) return console.error(err);
-    	threadInfo = info;
 
 		try {
 			trackingData = jsonfile.readFileSync('json/tracking_data.json');
@@ -66,7 +65,7 @@ login({email: "kenbhone@gmail.com", password: "naisubhig"}, function callback(er
         					if (err) return console.error(err);
 				        	var output = extend({}, trackingData);
 				        	var sortedOutput = [];
-				        	var size = Object.size(tracking_data);
+				        	var size = Object.keys(trackingData).length;
 				        	for (var i = 0; i < size; i++) {
 				        		var min = 1000000;
 				        		var minUser = "";
@@ -82,7 +81,7 @@ login({email: "kenbhone@gmail.com", password: "naisubhig"}, function callback(er
 				        	printedOutput = "Message sent:";
  
  				        	for (var x in sortedOutput) {
- 				        		y = Object.keys(obj);
+ 				        		y = Object.keys(sortedOutput);
  				        		key = y[0];
  				        		printedOutput = printedOutput + key + ": " + x[key] + '/n';
  				        	} 				        	
@@ -130,12 +129,14 @@ login({email: "kenbhone@gmail.com", password: "naisubhig"}, function callback(er
 	    				functions.hoot(api, group, info)
 	    				break;       			
 		    		case '/rps': case '/jkp':
-		    			functions.jankenPon(api, group, event.senderID);			    				  					        				
+		    			functions.jankenPon(api, group, event.senderID);	
+		    			input = '/rps';		    				  					        				
 		    			break;
 		    		case '/rock': case '/guu': case '✊':			    							        						        					
-					case '/paper': case "/paa": case "✋":			    				        								        						        					
-					case '/scissors': case "/choki": case "✌":			    	
-		    			functions.jankenPonParser(api, group, input);			    				  					        				
+					case '/paper': case '/paa': case '✋':			    				        								        						        					
+					case '/scissors': case '/choki': case '✌':			    	
+		    			functions.jankenPonParser(api, group, input);
+		    			cases = false;			    				  					        				
 		    			break;
 		    		default:
 		    			cases = false;  

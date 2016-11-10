@@ -153,12 +153,14 @@ module.exports = {
 			    if(winner === "player")
 			    	winner = "Looks like you win! Naisu."
 		    	clearTimeout(rpsCountdown); //cancel game timeout if game resolves successfully
-		    	gameInProgress = false;	
-		    	playerOneHand = "";
-		    	playerTwoHand = "";	
 		    	api.sendMessage(playerTwoHand, group, function() {
 		    		api.sendMessage(winner, group);	
 		   		}); 	
+		   		gameInProgress = false;
+		   		playerOne = "";
+		   		playerTwo = "";	
+		    	playerOneHand = "";
+		    	playerTwoHand = "";
 			}					
 		}	
 	}
