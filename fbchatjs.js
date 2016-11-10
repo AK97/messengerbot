@@ -22,13 +22,12 @@ login({email: "clayytonbhig@gmail.com", password: "naisubhig"}, function callbac
     var pio = '100006115174010'; //pio's user ID
 	var tracking_data = {};
 	var usage_data = {};
-	var thread_info = {};
 	var deeb = '1683495739'; //deeb's user ID
 
-	var test_chat = '1144974435591141'; // test chat
-    group = test_chat;
-	var aaron = '100003952090241'; //aaron's user ID
-	deeb = aaron;
+	// var test_chat = '1144974435591141'; // test chat
+ //    group = test_chat;
+	// var aaron = '100003952090241'; //aaron's user ID
+	// deeb = aaron;
 
 
 	// api.sendMessage("Enter B H I G", group);
@@ -65,33 +64,62 @@ login({email: "clayytonbhig@gmail.com", password: "naisubhig"}, function callbac
 
     api.getThreadInfo(group, function(err, info) {
     	if (err) return console.error(err);
-    	thread_info = info;
 
 		try {
-			tracking_data = jsonfile.readFileSync('tracking_data.json');
+			tracking_data = jsonfile.readFileSync('json/tracking_data.json');
 		} catch(err) {
-	    	for (var x in thread_info.participantIDs) {
-	    		var y = thread_info.participantIDs[x];
+	    	for (var x in info.participantIDs) {
+	    		var y = info.participantIDs[x];
 	    		tracking_data[y] = 0;
 	    	}
 		}
 
 		// make usage data stuff here
+		try {
+			usage_data = jsonfile.readFileSync('json/usage_data.json');
+		} catch(err) {}
+
 
 	    var stopListening = api.listen(function(err, event) {
 	        if (err) return console.error(err);
-	        if (event.threadID != group) {return;}
+	        if (event.threadID != group) return;
 	        var input = event.body;
+	        function case_usage() {
+				if (usage_data[input]) usage_data[input]++; else usage_data[input] = 1;
+	        }
+	        var cases = true;
         	if (event.type == "message" && input) {
     			switch(input) {
     				case '/status':
         				api.getThreadInfo(group, function(err, info) {
         					if (err) return console.error(err);
-	        				thread_info = info;
 				        	var output = extend({}, tracking_data);
-				        	for (var x in thread_info.nicknames) {
+				        	var sorted_output = [];
+				        	var size = Object.size(tracking_data);
+				        	for (var i = 0; i < size; i++) {
+				        		var min = 1000000;
+				        		var minUser = "";
+				        		for (var x in output) {
+				        			if (output[x] < min) {
+				        				min = output[x];
+				        				minUser = x;
+				        			}
+					        	}
+					        	sorted_output[i] = {minUser, min};
+				        	}
+
+				        	printed_output = "Message sent:";
+
+				        	for (var x in sorted_output) {
+				        		y = Object.keys(obj);
+				        		key = y[0];
+				        		printed_output = printed_output + key + ": " + x[key] + '/n';
+				        	}
+				        	
+
+				        	for (var x in info.nicknames) {
 				        		if (x in output) {
-				        			output[thread_info.nicknames[x]] = output[x];
+				        			output[info.nicknames[x]] = output[x];
 									delete output[x];
 				        		}
 				        	}
@@ -103,12 +131,12 @@ login({email: "clayytonbhig@gmail.com", password: "naisubhig"}, function callbac
         				api.sendMessage("HO HO HO", group);
         				api.changeNickname("Bhuge Dumbass", group, deeb);
         				break;
-        			case '/dab':
-        				api.sendMessage({attachment: fs.createReadStream('dab.png')}, group);
+        			case '/whip':
+        				api.sendMessage({attachment: fs.createReadStream('assets/dab.png')}, group);
     					break;
     			    case '/gloriousdawn':
 	    				api.sendMessage("A still more glorious dawn awaits.", group);
-						api.changeGroupImage(fs.createReadStream("tyson.jpg"), group, function callback(err) {
+						api.changeGroupImage(fs.createReadStream("assets/tyson.jpg"), group, function callback(err) {
 	        				if(err) return console.error(err);
 		    			});
 		    			api.setTitle("THE MOST ASTOUNDING FACT", group, function(err,obj){});
@@ -120,7 +148,7 @@ login({email: "clayytonbhig@gmail.com", password: "naisubhig"}, function callbac
 		    			});
 		    			break;
 		    		case '/hegg':
-	    				api.sendMessage({attachment: fs.createReadStream('hegg.gif')}, group);
+	    				api.sendMessage({attachment: fs.createReadStream('assets/hegg.gif')}, group);
 		    			break;
 	    			case '/compliment':
 	    				api.getUserInfo(event.senderID, function(err, ret){
@@ -131,67 +159,71 @@ login({email: "clayytonbhig@gmail.com", password: "naisubhig"}, function callbac
 	    				break;
 	    			case '/stopthemadness':
 	    				api.sendMessage("fuk the frik off", group);
-	    				var file = 'tracking_data.json'
-						 
-						jsonfile.writeFile(file, tracking_data, function (err) {
+						jsonfile.writeFile('json/tracking_data.json', tracking_data, function (err) {
 							if (err) console.error(err);
-						})
+						});
+						jsonfile.writeFile('json/usage_data.json', usage_data, function (err) {
+							if (err) console.error(err);
+						});
 	    				return stopListening();
 	    				break;
 	    			case '/hoot':
-	    				var size = Object.keys(thread_info.participantIDs).length;
-	    				var randomUser = thread_info.participantIDs[Math.floor(Math.random() * size)];
+	    				var size = Object.keys(info.participantIDs).length;
+	    				var randomUser = info.participantIDs[Math.floor(Math.random() * size)];
 	    				api.sendMessage("Hoot! You must kill God.", randomUser);
 	    				break;
-		    		default:        			
-		    			if(input === '/rps' || input === "/jkp" || gameInProgress) {
-		    				if (!gameInProgress) {	//makes sure there isn't an ongoing game before starting a new one	        						        					
-		    					api.sendMessage("Saisho wa guu!", group);
-		    					setTimeout(function() {
-		    						api.sendMessage("Janken pon!", group) }, 1500);
-		    					gameInProgress = true; //flag to make sure new games can't start until this one is done
-		    					botHand = ["✊","✋","✌"][Math.floor(Math.random()*3)]; //randomize bot choice	
-		    					//start a countdown to end the game if the player doesn't make a choice	in time       							
-		    						rpsCountdown = setTimeout(function() { 	        					
-			    						console.log("Game timed out"); 		        						        					
-			    						gameInProgress = false;
-			    					}, 10000);
-			    				return;
-		    				}
+	    			case '/rps':
+	    			case '/jkp':
+	    				api.sendMessage("Saisho wa guu!", group);
+    					setTimeout(function() {
+    						api.sendMessage("Janken pon!", group) }, 1500);
+    					gameInProgress = true; //flag to make sure new games can't start until this one is done
+    					botHand = ["✊","✋","✌"][Math.floor(Math.random()*3)]; //randomize bot choice	
+    					//start a countdown to end the game if the player doesn't make a choice	in time       							
+    						rpsCountdown = setTimeout(function() { 	        					
+	    						console.log("Game timed out"); 		        						        					
+	    						gameInProgress = false;
+	    					}, 10000);
+	    				break;
+		    		default:
+		    			// rps stuff
+		    			cases = false;        			
+		    			if (gameInProgress) {
+		    				var playerHand = undefined;
 		    				//set playerHand as per valid user input
-		    					if(input === '/rock' || input === "/guu" || input === "✊") 
-		    						playerHand = "✊";       								        						        					
-		    					if(input === '/paper' || input === "/paa" || input === "✋") 
-		    						playerHand = "✋";  			        								        						        					
-		    					if(input === '/scissors' || input === "/choki" || input === "✌") 
-		    						playerHand = "✌";
-		    					//game logic		        								        								        						
-		    					if (playerHand === "✊" || playerHand === "✋" || playerHand === "✌" ) {
-		    						var winner = "Tie";
-		    						if (playerHand === "✊") {
-		    							if (botHand === "✋")
-		    								winner = "bot";
-		    							if (botHand === "✌")
-		    								winner = "player";
-		    						}
-		    						if (playerHand === "✋") {		        							
-		    							if (botHand === "✌")
-		    								winner = "bot";
-		    							if (botHand === "✊")
-		    								winner = "player";
-		    						}
-		    						if (playerHand === "✌") {
-		    							if (botHand === "✊")
-		    								winner = "bot";
-		    							if (botHand === "✋")
-		    								winner = "player";
-		    						}
-		    						clearTimeout(rpsCountdown); //cancel game timeout if game resolves successfully
-		    						gameInProgress = false;	
-		    						playerHand = "";	
-		    						api.sendMessage(botHand, group);
-		    						api.sendMessage("Winner: " + winner, group);
-		    					}					        					   		        				    				  					        				
+	    					if(input === '/rock' || input === "/guu" || input === "✊") 
+	    						playerHand = "✊";       								        						        					
+	    					if(input === '/paper' || input === "/paa" || input === "✋") 
+	    						playerHand = "✋";  			        								        						        					
+	    					if(input === '/scissors' || input === "/choki" || input === "✌") 
+	    						playerHand = "✌";
+	    					//game logic		        								        								        						
+	    					if (playerHand === "✊" || playerHand === "✋" || playerHand === "✌" ) {
+	    						var winner = "Tie";
+	    						if (playerHand === "✊") {
+	    							if (botHand === "✋")
+	    								winner = "bot";
+	    							if (botHand === "✌")
+	    								winner = "player";
+	    						}
+	    						if (playerHand === "✋") {		        							
+	    							if (botHand === "✌")
+	    								winner = "bot";
+	    							if (botHand === "✊")
+	    								winner = "player";
+	    						}
+	    						if (playerHand === "✌") {
+	    							if (botHand === "✊")
+	    								winner = "bot";
+	    							if (botHand === "✋")
+	    								winner = "player";
+	    						}
+	    						clearTimeout(rpsCountdown); //cancel game timeout if game resolves successfully
+	    						gameInProgress = false;	
+	    						playerHand = "";	
+	    						api.sendMessage(botHand, group);
+	    						api.sendMessage("Winner: " + winner, group);
+			    			}						        					   		        				    				  					        				
 		    			}
 		    			if (input.indexOf("/8ball")==0 || input.indexOf("🎱")==0) {
 		            		if (event.senderID == deeb) {
@@ -199,19 +231,24 @@ login({email: "clayytonbhig@gmail.com", password: "naisubhig"}, function callbac
 		            		} else {
 		               			api.sendMessage(eightball[Math.floor(Math.random()*20)], group);
 		            		}
+		            		if (usage_data['/8ball']) usage_data['/8ball']++; else usage_data['/8ball'] = 1;
 		    			}
-		    			if(input.indexOf("/talk")==0){
+		    			else if(input.indexOf("/talk")==0 || input.indexOf("/t")==0){
 							var talking = input.replace("/talk ","");
 							bot.ask(talking,function(err,response){
 								if (err) return console.error(err);
 								api.sendMessage(response,group);
 							});
+		            		if (usage_data['/talk']) usage_data['/talk']++; else usage_data['/talk'] = 1;
 						}
-						if(input.search("Clayyton") >= 0 or input.search("clayyton") >= 0) {
-							bot.ask(input,function(err,response){
+						else if(input.search("Clayyton") >= 0 || input.search("clayyton") >= 0) {
+							var talking = input.replace("Clayyton","");
+							talking = talking.replace("clayyton","");
+							bot.ask(talking,function(err,response){
 								if (err) return console.error(err);
 								api.sendMessage(response,group);
 							});
+		            		if (usage_data['/talk']) usage_data['/talk']++; else usage_data['/talk'] = 1;
 						}
 	    		}
 	    		if (Math.random() > .99) {
@@ -220,7 +257,11 @@ login({email: "clayytonbhig@gmail.com", password: "naisubhig"}, function callbac
 		        		api.sendMessage(response, group);
 		        	});
 		        }
-				if (event.senderID) tracking_data[event.senderID]++;		        	
+
+		        // data
+	    		if (cases) case_usage();
+				if (event.senderID) tracking_data[event.senderID]++;
+				console.log(event);		        	
 		    }
 	        else if (event.type == "read_receipt"){
 	        	if (Math.random() > .80 && event.reader == roon)
