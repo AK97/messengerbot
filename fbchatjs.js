@@ -18,9 +18,9 @@ login({email: "chestercheetahxd@gmail.com", password: "naisubhig"}, function cal
     var aaron = '100003952090241'; //aaron's user ID
     var deeb = '1683495739'; //deeb's user ID	
 
-	/*var testChat = '1144974435591141'; // test chat
+	var testChat = '1144974435591141'; // test chat
     group = testChat;	
-	deeb = aaron;*/
+	deeb = aaron;
 
 	//data stuff
 	var trackingData = {};
@@ -119,10 +119,14 @@ login({email: "chestercheetahxd@gmail.com", password: "naisubhig"}, function cal
 	    				break;
 	    			case '/stopthemadness':
 	    				api.sendMessage("fuk the frik off", group);
-	    				json.writeFile('json/tracking_data.json', trackingData, function callback (err)
-	    				{
+	    				jsonfile.writeFile('json/tracking_data.json', trackingData,
+	    				function callback(err) {
 	    					if (err) return console.error(err);
-	    				});						 
+	    				});	
+	    				jsonfile.writeFile('json/usage_data.json', usageData, 
+	    				function callback(err) {
+ 							if (err) console.error(err);
+ 						});					 
 	    				return stopListening();
 	    				break;
 	    			case '/hoot':
@@ -135,7 +139,7 @@ login({email: "chestercheetahxd@gmail.com", password: "naisubhig"}, function cal
 		    		case '/rock': case '/guu': case '✊':			    							        						        					
 					case '/paper': case '/paa': case '✋':			    				        								        						        					
 					case '/scissors': case '/choki': case '✌':			    	
-		    			functions.jankenPonParser(api, group, input);
+		    			functions.jankenPonParse(api, group, input);
 		    			cases = false;			    				  					        				
 		    			break;
 		    		default:
@@ -149,8 +153,8 @@ login({email: "chestercheetahxd@gmail.com", password: "naisubhig"}, function cal
 		    			}
 		    			else if (input.indexOf("/talk") == 0 || input.indexOf("/t") == 0) 
 		    			{
-		    				var talking = input.replace("/talk","");
- 							talking = talking.replace("/t","");
+		    				var talking = input.replace("/talk ","");
+ 							talking = talking.replace("/t ","");
 		    				functions.talk(api, group, talking);		    					
 		    				if (usageData['/talk'])
 		    					usageData['/talk']++; 
@@ -159,8 +163,8 @@ login({email: "chestercheetahxd@gmail.com", password: "naisubhig"}, function cal
 		    			}
 						else if (input.search("Clayyton") >= 0 || input.search("clayyton") >= 0) 
 						{
-							var talking = input.replace("Clayyton","");
- 							talking = talking.replace("clayyton","");
+							var talking = input.replace("Clayyton ","");
+ 							talking = talking.replace("clayyton ","");
 							functions.talk(api, group, talking);
 							if (usageData['/talk']) 
 								usageData['/talk']++; 
@@ -172,7 +176,7 @@ login({email: "chestercheetahxd@gmail.com", password: "naisubhig"}, function cal
 	    		if (Math.random() > .99) 
 		        	functions.talk(api, group, input);	
 		        // data
- 	    		if (cases) 
+ 	    		if (cases)
  	    			caseUsage(); 				        
 				if (event.senderID) {
 					trackingData[event.senderID]++;	
