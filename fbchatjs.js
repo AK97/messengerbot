@@ -4,7 +4,7 @@ var jsonfile = require('jsonfile');
 var extend = require('util')._extend;
 var functions = require('./functions');
 
-login({email: "kenbhone@gmail.com", password: "naisubhig"}, function callback(err, api) {
+login({email: "chestercheetahxd@gmail.com", password: "naisubhig"}, function callback(err, api) {
     if(err) return console.error(err);
 
     api.setOptions({
