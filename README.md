@@ -3,7 +3,7 @@ This is a facebook messenger bot that acts as a sort of virtual assistant.
 As it stands it's NSFW, but can easily be stripped of its swearing and drug references.  
 It can also do some funny things like yell at a designated annoying friend every now and then.  
 It uses a variety of web APIs to deliver some handy information upon request.  
-This project was inspired by a more meme-centric bot written by @tarungog et al.  
+This project was inspired by a more meme-centric bot written by [@tarungog](https://github.com/tarungog) et al.  
 This repo attempts to be an adaptation with cleaner code and easy customizability.  
 It's a little hard to imagine "legitimate" use cases for such a bot but who knows. An AI robot will probably be a staple of every group chat in the future 🤖.  
 
