@@ -1,6 +1,3 @@
 node_modules/
-.ignore 
-.iws 
-workspace.xml
-tasks.xml 
-tracking_data.json
+assets/login.json
+assets/users.json

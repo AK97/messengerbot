@@ -1,0 +1,26 @@
+{
+  "name": "messengerbot",
+  "version": "2.0.0",
+  "description": "fb messenger bot",
+  "main": "fbchatjs.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/AK97/messengerbot.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/AK97/messengerbot/issues"
+  },
+  "homepage": "https://github.com/AK97/messengerbot#readme",
+  "dependencies": {
+    "express": "^4.17.1",
+    "facebook-chat-api": "^1.8.0",
+    "newsapi": "^2.4.0"
+  }
+}
