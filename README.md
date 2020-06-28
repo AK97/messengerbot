@@ -12,9 +12,9 @@ It's a little hard to imagine "legitimate" use cases for such a bot but who know
 - OpenWeatherMap api key [**Optional**]
 - News API api key [**Optional**]
 
-### Installation & Usage
+### Installation
 - Download/clone repo
-- Make a file 'login.json' in /assets that looks like this:  
+- Make a file ```login.json``` in /assets that looks like this:  
 ```javascript
 {
     "email": "",
@@ -25,8 +25,8 @@ It's a little hard to imagine "legitimate" use cases for such a bot but who know
     "name": ""
 }
 ```
-with the relevant fields filled out. name can be anything of your choosing e.g. friendbot
-- Optionally, make a file 'users.json' in /assets that looks like this:
+with the relevant fields filled out. Value for "name" can be anything of your choosing e.g. friendbot
+- Optionally, make a file ```users.json``` in /assets that looks like this:
 ```javascript
 {
     "1234": "Alice",
@@ -34,7 +34,10 @@ with the relevant fields filled out. name can be anything of your choosing e.g. 
     "9012": "Carol",
 }
 ```
-where keys are fb profile IDs and names are names/nicknames. Include any user you wish to ever address by name.
+where keys are fb numeric profile IDs and values are names/nicknames. Include any user you wish to ever address by name.
 - ```npm install```
-- ```npm start```
-- Begin chatting the bot's account or add it to any group chat.
+- ```npm start```  
+
+### Usage
+You can chat with the bot individually or add it to any group chat.  
+It might be helpful to start by saying "!help".

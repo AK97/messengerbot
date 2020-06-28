@@ -73,6 +73,9 @@ login({email: login_email, password: login_password}, function callback(err, api
                 case '!weather':
                     abilities.weather(api, event.threadID, message);
                     break;
+                case '!alert':
+                    abilities.alert(api, event.threadID, event.body);
+                    break;
                 default:
                     if (sender == ANNOYING_FRIEND) {
                         abilities.respondToAF(api, event.threadID, ANNOYING_FRIEND);

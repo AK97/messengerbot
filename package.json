@@ -1,8 +1,8 @@
 {
   "name": "messengerbot",
-  "version": "3.0.0",
-  "description": "fb messenger bot",
-  "main": "fbchatjs.js",
+  "version": "3.1.0",
+  "description": "facebook messenger robot assistant",
+  "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "node index.js"
@@ -12,8 +12,7 @@
     "url": "git+https://github.com/AK97/messengerbot.git"
   },
   "keywords": [],
-  "author": "",
-  "license": "ISC",
+  "author": "AK",
   "bugs": {
     "url": "https://github.com/AK97/messengerbot/issues"
   },

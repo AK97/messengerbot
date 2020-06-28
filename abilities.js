@@ -9,6 +9,7 @@ const NAMELIST = require('./assets/names.js');
 
 const WEATHER_API_KEY = Account.weather_api_key;
 const NEWS_API_KEY = Account.news_api_key;
+const SELF_ID = Account.account_id;
 const SELF_NAME = Account.name;
 
 var newsapi = new NewsAPI(NEWS_API_KEY);
@@ -50,13 +51,13 @@ function help(api, group) {
         '!cocktail [ingredient?]: Drink suggestions',
         '!covid [country?]: Get the latest numbers',
         '!news [keyword?]: Recent headlines',
-        '!weather [zip/city]: Current weather'
+        '!weather [zip/city]: Current weather',
+        '!alert [message]: Notify everyone'
     ];
     api.sendMessage(helpmenu.join('\n'), group);
 }
 
 function introduceSelf(api, group) {
-    // api.sendMessage('Hi, I\'m HoeBot. Don\'t call me Calvin.', group);
     api.sendMessage(`Hi, I\'m ${SELF_NAME}.`, group);
 }
 
@@ -129,7 +130,7 @@ function crystalBall(api, group) {
 }
 
 function rps(api, group, player, message) {
-    playername = NAMEOF[player];
+    playername = NAMEOF[player] || 'wanna play again?';
     if (message.split(' ').length >= 2) {
         if (['rock', 'paper', 'scissors'].includes(message.split(' ')[1])) {
             let player_choice = message.split(' ')[1];
@@ -434,6 +435,31 @@ function weather(api, group, message) {
     }
 }
 
+function alert(api, group, message) {
+    let splt = message.split(' ');
+    splt.splice(0, 1);
+    let alert = splt.join(' ');
+    api.getThreadInfo(group, (err, info) => {
+        var tags = '';
+        var mentions = [];
+        let users = info.participantIDs;
+        // don't tag self
+        users.splice(users.indexOf(SELF_ID), 1);
+        for (var u = 0; u < users.length; u++) {
+            tags += `@${NAMEOF[users[u]]} `;
+            mentions.push(
+                {
+                    tag: `@${NAMEOF[users[u]]}`,
+                    id: users[u]
+                });
+        }
+        api.sendMessage({
+            body: `${tags}\n${alert}`,
+            mentions: mentions,
+        }, group);
+    })
+}
+
 module.exports = {
     help,
     introduceSelf,
@@ -449,5 +475,6 @@ module.exports = {
     cocktail,
     covid,
     news,
-    weather
+    weather,
+    alert
 }
