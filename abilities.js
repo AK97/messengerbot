@@ -13,6 +13,7 @@ const NEWS_API_KEY = Account.news_api_key;
 const FOOD_API_KEY = Account.food_api_key;
 const SELF_ID = Account.account_id;
 const SELF_NAME = Account.name;
+const SELF_GREETING = Account.greeting;
 
 var newsapi = new NewsAPI(NEWS_API_KEY);
 
@@ -63,7 +64,7 @@ function help(api, group) {
 }
 
 function introduceSelf(api, group) {
-    api.sendMessage(`Hi, I\'m ${SELF_NAME}. Don\'t call me Calvin.`, group);
+    api.sendMessage(`Hi, I\'m ${SELF_NAME}. ${SELF_GREETING}`, group);
 }
 
 function greet(api, group) {
