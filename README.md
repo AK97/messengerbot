@@ -11,6 +11,7 @@ It's a little hard to imagine "legitimate" use cases for such a bot but who know
 - A facebook account [**Necessary**]
 - OpenWeatherMap api key [**Optional**]
 - News API api key [**Optional**]
+- Spoonacular api key [**Optional**]
 
 ### Installation
 - Download/clone repo
@@ -40,4 +41,5 @@ where keys are fb numeric profile IDs and values are names/nicknames. Include an
 
 ### Usage
 You can chat with the bot individually or add it to any group chat.  
-It might be helpful to start by saying "!help".
+Start by saying "!help" for a list of commands.  
+![Sample bot help menu](https://raw.githubusercontent.com/AK97/messengerbot/master/assets/sample_help_menu.png)

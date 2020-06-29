@@ -10,7 +10,7 @@ const login_password = Account.password;
 const SELF_ID = Account.account_id;
 const SELF_NAME = Account.name;
 
-const ANNOYING_FRIEND = ''; // Someone's fb profile ID
+const ANNOYING_FRIEND = '100001372635682'; // Someone's fb profile ID
 // Listed name for AF should be one word or it wont work as it stands rn
 
 ///// RUN (LOG IN AND LISTEN) /////
@@ -75,6 +75,15 @@ login({email: login_email, password: login_password}, function callback(err, api
                     break;
                 case '!alert':
                     abilities.alert(api, event.threadID, event.body);
+                    break;
+                case '!food':
+                    abilities.recipes(api, event.threadID, message);
+                    break;
+                case '!wine':
+                    abilities.wine(api, event.threadID, message, sender);
+                    break;
+                case '!trivia':
+                    abilities.trivia(api, event.threadID);
                     break;
                 default:
                     if (sender == ANNOYING_FRIEND) {

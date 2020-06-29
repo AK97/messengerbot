@@ -20,6 +20,7 @@
   "dependencies": {
     "express": "^4.17.1",
     "facebook-chat-api": "^1.8.0",
+    "he": "^1.2.0",
     "newsapi": "^2.4.0"
   }
 }
