@@ -22,6 +22,7 @@ It's a little hard to imagine "legitimate" use cases for such a bot but who know
     "password": "",
     "news_api_key": "",
     "weather_api_key": "",
+    "food_api_key": "",
     "account_id": "",
     "name": ""
 }
