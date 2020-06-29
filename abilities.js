@@ -63,7 +63,7 @@ function help(api, group) {
 }
 
 function introduceSelf(api, group) {
-    api.sendMessage(`Hi, I\'m ${SELF_NAME}.`, group);
+    api.sendMessage(`Hi, I\'m ${SELF_NAME}. Don\'t call me Calvin.`, group);
 }
 
 function greet(api, group) {
