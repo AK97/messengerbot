@@ -1,6 +1,6 @@
 ///// SETUP /////
 
-var login = require("facebook-chat-api");
+var login = require('facebook-chat-api');
 var Account = require('./assets/login.json');
 var abilities = require('./abilities.js')
 var NAMEOF = require('./assets/users.json');
@@ -10,7 +10,7 @@ const login_password = Account.password;
 const SELF_ID = Account.account_id;
 const SELF_NAME = Account.name;
 
-const ANNOYING_FRIEND = '100001372635682'; // Someone's fb profile ID
+const ANNOYING_FRIEND = ''; // Someone's fb profile ID
 // Listed name for AF should be one word or it wont work as it stands rn
 
 ///// RUN (LOG IN AND LISTEN) /////
@@ -27,7 +27,7 @@ login({email: login_email, password: login_password}, function callback(err, api
     var stopListening = api.listenMqtt((err, event) => {
         if(err) return console.error(err);
 
-        if (event.type == "message") {
+        if (event.type == 'message' || event.type == 'message_reply') {
 
             // Always immediately mark as read, to indicate it's alive and listening
             api.markAsRead(event.threadID, (err) => {
@@ -36,77 +36,78 @@ login({email: login_email, password: login_password}, function callback(err, api
 
             let sender = event.senderID;
             let message = event.body.toLowerCase();
+            let chat = event.threadID;
 
             // Commands
-
+            
             switch(message.split(' ')[0]) {
-                case '!help':
-                    abilities.help(api, event.threadID);
+                case '!help': case '!h': case '!menu': case `!${SELF_NAME.toLowerCase()}`:
+                    abilities.help(api, chat, NAMEOF[ANNOYING_FRIEND]);
                     break;
-                case '!flipacoin':
-                    abilities.flipACoin(api, event.threadID);
+                case '!flipacoin': case '!flip': case '!coin':
+                    abilities.flipACoin(api, chat);
                     break;
-                case '!rolldice':
-                    abilities.rollDice(api, event.threadID);
+                case '!rolldice': case '!roll': case '!dice':
+                    abilities.rollDice(api, chat);
                     break;
                 case `!${NAMEOF[ANNOYING_FRIEND].toLowerCase()}`:
-                    abilities.tellAFToSTFU(api, event.threadID, ANNOYING_FRIEND);
+                    abilities.tellAFtoSTFU(api, chat, ANNOYING_FRIEND, NAMEOF[ANNOYING_FRIEND]);
                     break;
-                case '!crystalball':
-                    abilities.crystalBall(api, event.threadID);
+                case '!crystalball': case '!8ball': case '!eightball': case '!future':
+                    abilities.crystalBall(api, chat);
                     break;
-                case '!rps':
-                    abilities.rps(api, event.threadID, sender, message);
+                case '!rps': case '!rockpaperscissors':
+                    abilities.rps(api, chat, sender, message);
                     break;
                 case '!name':
-                    abilities.randomName(api, event.threadID);
+                    abilities.randomName(api, chat);
                     break;
-                case '!cocktail':
-                    abilities.cocktail(api, event.threadID, message, sender);
+                case '!cocktail': case '!drink': case '!drinks':
+                    abilities.cocktail(api, chat, message, sender);
                     break;
-                case '!covid':
-                    abilities.covid(api, event.threadID, message);
+                case '!covid': case '!coronavirus': case '!covid19':
+                    abilities.covid(api, chat, message);
                     break;
-                case '!news':
-                    abilities.news(api, event.threadID, message);
+                case '!news': case '!breaking':
+                    abilities.news(api, chat, message);
                     break;
                 case '!weather':
-                    abilities.weather(api, event.threadID, message);
+                    abilities.weather(api, chat, message);
                     break;
-                case '!alert':
-                    abilities.alert(api, event.threadID, event.body);
+                case '!alert': case '!notify':
+                    abilities.alert(api, chat, event.body);
                     break;
-                case '!food':
-                    abilities.recipes(api, event.threadID, message);
+                case '!food': case '!recipe':
+                    abilities.recipes(api, chat, message);
                     break;
-                case '!wine':
-                    abilities.wine(api, event.threadID, message, sender);
+                case '!wine': case '!vino':
+                    abilities.wine(api, chat, message, sender);
                     break;
                 case '!trivia':
-                    abilities.trivia(api, event.threadID);
+                    abilities.trivia(api, chat);
+                    break;
+                case '!pics': case '!images': case 'pictures':
+                    abilities.images(api, chat, message);
                     break;
                 default:
-                    if (sender == ANNOYING_FRIEND) {
-                        abilities.respondToAF(api, event.threadID, ANNOYING_FRIEND);
-                    }
-                    if (event.mentions[SELF_ID]) {
-                        abilities.introduceSelf(api, event.threadID);
-                    }
-                    if (message.includes('drink')) {
-                        abilities.letsDrink(api, event.threadID);
-                    }
-                    if (message.includes('darty')) {
-                        abilities.letsDrink(api, event.threadID);
-                    }
                     if (message.includes(SELF_NAME.toLowerCase())) {
-                        abilities.greet(api, event.threadID);
+                        abilities.greet(api, chat, message, event.messageID);
+                    }
+                    else if (event.mentions[SELF_ID]) {
+                        abilities.introduceSelf(api, chat);
+                    }
+                    else if (message.includes('drink') || message.includes('darty')) {
+                        abilities.letsDrink(api, chat);
+                    }
+                    else if (sender == ANNOYING_FRIEND) {
+                        abilities.respondToAF(api, chat, ANNOYING_FRIEND, NAMEOF[ANNOYING_FRIEND]);
                     }
                     break;
             }
-
         }
-        else {
-            console.log(event);
+        else if (event.type != 'presence') {
+            // 'presence' events are when fb friends of the bot come online. Don't care.
+            console.log(event); // For debugging purposes
         }
     });
 });

@@ -12,22 +12,27 @@ It's a little hard to imagine "legitimate" use cases for such a bot but who know
 - OpenWeatherMap api key [**Optional**]
 - News API api key [**Optional**]
 - Spoonacular api key [**Optional**]
+- Google custom search engine id & api key [**Optional**]
 
 ### Installation
 - Download/clone repo
-- Make a file ```login.json``` in /assets that looks like this:  
+- Make a file ```assets/login.json``` that looks like this:  
 ```javascript
 {
     "email": "",
     "password": "",
     "news_api_key": "",
     "weather_api_key": "",
+    "food_api_key": "",
+    "search_api_key": "",
+    "search_id": "",
     "account_id": "",
-    "name": ""
+    "name": "",
+    "greeting": ""
 }
 ```
 with the relevant fields filled out. Value for "name" can be anything of your choosing e.g. friendbot
-- Optionally, make a file ```users.json``` in /assets that looks like this:
+- Optionally, make a file ```assets/users.json``` that looks like this:
 ```javascript
 {
     "1234": "Alice",
