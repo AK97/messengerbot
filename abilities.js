@@ -2,52 +2,60 @@
 
 var https = require('https');
 var he = require('he');
+var fs = require('fs');
 var NewsAPI = require('newsapi');
 var Account = require('./assets/login.json');
 var NAMEOF = require('./assets/users.json');
+var createCollage = require('@settlin/collage');
+var download = require('images-downloader').images;
 
 const NAMELIST = require('./assets/names.js');
 
 const WEATHER_API_KEY = Account.weather_api_key;
 const NEWS_API_KEY = Account.news_api_key;
 const FOOD_API_KEY = Account.food_api_key;
+const SEARCH_API_KEY = Account.search_api_key;
+const SEARCH_ID = Account.search_id;
 const SELF_ID = Account.account_id;
 const SELF_NAME = Account.name;
 const SELF_GREETING = Account.greeting;
 
 var newsapi = new NewsAPI(NEWS_API_KEY);
 
-const ANNOYING_FRIEND = '100001372635682'; // Someone's fb profile ID
-// Listed name for AF should be one word or it wont work as it stands rn
-
-///// ABILITIES /////
+///// HELPERS /////
 
 function randomNumberBetween(min, max) {
     // Inclusive
     return Math.floor(Math.random() * (max - min + 1)) + min;
 }
 
-function respondToAF(api, group, target) {
+function generateUniqueCode() {
+    return '_'+Math.random().toString(36).substr(2, 7);
+}
+
+///// ABILITIES /////
+
+function respondToAF(api, group, target, target_name) {
     if (!randomNumberBetween(0,4)) {
-        api.sendMessage(`Shut up, ${NAMEOF[target]}`, group)
+        api.sendMessage(`Shut up, ${target_name}`, group)
     }
 }
 
-function tellAFToSTFU(api, group, target) {
+function tellAFtoSTFU(api, group, target, target_name) {
     api.sendMessage({
-        body: `@${NAMEOF[target]}, SHUT THE FUCK UP`,
+        body: `@${target_name}, SHUT THE FUCK UP`,
         mentions: [{
-             tag: `@${NAMEOF[target]}`,
+             tag: `@${target_name}`,
              id: target
         }],
     }, group);
 }
 
-function help(api, group) {
+function help(api, group, af_name) {
     let helpmenu = [
         '!flipacoin: Flip a coin',
         '!rolldice: Roll two dice',
-        `!${NAMEOF[ANNOYING_FRIEND].toLowerCase()}: Useful shorthand message`,
+        `!${af_name.toLowerCase()}: Useful shorthand message`,
         '!crystalball: See the future',
         '!rps [rock/paper/scissors]: Play RPS',
         '!name: Need a name?',
@@ -58,16 +66,71 @@ function help(api, group) {
         '!food [keywords?]: Suggestions and recipes',
         '!wine [type]: Only the finest',
         '!cocktail [ingredient?]: Drink suggestions',
-        '!trivia: Test your knowledge'
+        '!trivia: Test your knowledge',
+        '!pics [query]: See pictures of things'
     ];
     api.sendMessage(helpmenu.join('\n'), group);
 }
 
 function introduceSelf(api, group) {
-    api.sendMessage(`Hi, I\'m ${SELF_NAME}. ${SELF_GREETING}`, group);
+    api.sendMessage(`Hi, I\'m ${SELF_NAME || "a robot"}. ${SELF_GREETING || 'Need something? Try saying "!help"'}`, group);
 }
 
-function greet(api, group) {
+function greet(api, group, message, messageID) {
+    let positive = [
+        'great',
+        'good',
+        'well done',
+        'awesome',
+        'smart',
+        'clever',
+        'sick',
+        'nice',
+        'not bad',
+        'wow',
+        'love',
+        'like',
+        'perfect',
+        'amazing',
+        'cool',
+        'drink',
+        'keep it up'
+    ];
+    let negative = [
+        'bad',
+        'terrible',
+        'dumb',
+        'stupid',
+        'wrong',
+        'idiot',
+        'dummy',
+        'try again',
+        'not great',
+        'not good',
+        'worst',
+        'shut up',
+        'shutup',
+        'be quiet',
+        'don\'t like',
+        'suck',
+        'trash',
+        'garbage',
+        'fuck you',
+        'fuck off'
+    ];
+
+    // If the bot is being talked about negatively, react with cry
+    // Checks for negative first because negative might be [not] [positive word]
+    if (negative.some(n => message.includes(n))) {
+        api.setMessageReaction(':cry:', messageID);
+        return null;
+    }
+    // If the bot is mentioned in a positive light, react with heart
+    if (positive.some(p => message.includes(p))) {
+        api.setMessageReaction(':love:', messageID);
+        return null;
+    }
+
     let greetings = [
         'What up',
         'Sup',
@@ -81,8 +144,12 @@ function greet(api, group) {
         'Hey',
         'What',
         'That\'s my name don\'t wear it out',
-        'What do you want'
+        'What do you want',
+        'Can I help you?',
+        'I do my best',
+        'I bet I can beat you at rock paper scissors',
     ];
+
     let outcome = greetings[randomNumberBetween(0, greetings.length-1)];
     api.sendMessage(outcome, group);
 }
@@ -214,7 +281,7 @@ function cocktail(api, group, message, sender) {
                 body += chunk;
             });
             res.on('end', function(){
-                response = JSON.parse(body);
+                var response = JSON.parse(body);
                 let choice = response['drinks'][0];
                 var ingList = [];
                 for (var i = 1; i < 20; i++) {
@@ -226,75 +293,67 @@ function cocktail(api, group, message, sender) {
                 let outcome = 'Okay, ' + NAMEOF[sender] + ', you alcoholic: I suggest' + article + choice.strDrink + '\nIt\'s made with ' + ingList.join(', ');
                 api.sendMessage(outcome, group);
             });
-        }).on('error', function(e){
-                console.log("Got an error trying to get cocktails: ", e);
         });
     }
     else {
         message.splice(0, 1);
         message = message.join(' ');
         let pi_url = 'https://www.thecocktaildb.com/api/json/v1/1/list.php?i=list';
-        var possible_ingredients = [];
-        var response;
-        https.get(pi_url, function(res) {
+
+        let url = 'https://www.thecocktaildb.com/api/json/v1/1/filter.php?i=' + message;
+        https.get(url, function(res) {
             var body = '';
             res.on('data', function(chunk) {
                 body += chunk;
             });
             res.on('end', function() {
-                response = JSON.parse(body);
-                for (var pi = 0; pi < response['drinks'].length; pi++) {
-                    possible_ingredients.push(response['drinks'][pi]['strIngredient1'].toLowerCase());
-                }
-                // console.log(message, possible_ingredients);
-                let url = 'https://www.thecocktaildb.com/api/json/v1/1/filter.php?i=' + message;
-                var response;
-                https.get(url, function(res) {
-                    var body = '';
-                    res.on('data', function(chunk) {
-                        body += chunk;
-                    });
-                    res.on('end', function() {
-                        response = JSON.parse(body);
-                        let options = response['drinks'];
-                        let choice = options[randomNumberBetween(0, options.length-1)];
-                        let article = ['a','e','i','o','u'].includes(choice.strDrink[0].toLowerCase()) ? ' an ' : ' a ';
-                        let drinkPage = 'https://www.thecocktaildb.com/api/json/v1/1/lookup.php?i=' + choice.idDrink;
-                        var secondresponse;
-                        https.get(drinkPage, function(res) {
-                            var body = '';
-                            res.on('data', function(chunk) {
-                                body += chunk;
-                            });
-                            res.on('end', function() {
-                                secondresponse = JSON.parse(body);
-                                if(secondresponse['drinks']) {
-                                    let choice2 = secondresponse['drinks'][0];
-                                    var ingList = [];
-                                    for (var i = 1; i < 20; i++) {
-                                        if (choice2['strIngredient'+i]) {
-                                            ingList.push(choice2['strIngredient'+i]);
-                                        }
+                if (body) {
+                    let response = JSON.parse(body);
+                    let options = response['drinks'];
+                    let choice = options[randomNumberBetween(0, options.length-1)];
+                    let article = ['a','e','i','o','u'].includes(choice.strDrink[0].toLowerCase()) ? ' an ' : ' a ';
+                    let drinkPage = 'https://www.thecocktaildb.com/api/json/v1/1/lookup.php?i=' + choice.idDrink;
+                    https.get(drinkPage, function(res) {
+                        var body2 = '';
+                        res.on('data', function(chunk) {
+                            body2 += chunk;
+                        });
+                        res.on('end', function() {
+                            let secondresponse = JSON.parse(body2);
+                            if (secondresponse['drinks']) {
+                                let choice2 = secondresponse['drinks'][0];
+                                var ingList = [];
+                                for (var i = 1; i < 20; i++) {
+                                    if (choice2['strIngredient'+i]) {
+                                        ingList.push(choice2['strIngredient'+i]);
                                     }
-                                    let outcome = 'If you want something with ' + message + ', consider making' + article + choice.strDrink + '\nIt\'s made with ' + ingList.join(', ');
-                                    api.sendMessage(outcome, group);
                                 }
-                                else {
-                                    let random_ingredient = possible_ingredients[randomNumberBetween(0, possible_ingredients.length-1)];
-                                    api.sendMessage(`I dont recognize that ingredient. Try saying something like, "!cocktail ${random_ingredient}"`, group);
-                                }
-                            });
-                        }).on('error', function(e){
-                                console.log("Got an error trying to get specific cocktail info: ", e);
+                                let outcome = 'If you want something with ' + message + ', consider making' + article + choice.strDrink + '\nIt\'s made with ' + ingList.join(', ');
+                                api.sendMessage(outcome, group);
+                            }
                         });
                     });
-                }).on('error', function(e){
-                    console.log("Got an error trying to get cocktails", e);
-                });
+                }
+                else {
+                    var possible_ingredients = [];
+                    https.get(pi_url, function(res) {
+                        var body3 = '';
+                        res.on('data', function(chunk) {
+                            body3 += chunk;
+                        });
+                        res.on('end', function() {
+                            var response = JSON.parse(body3);
+                            for (var pi = 0; pi < response['drinks'].length; pi++) {
+                                possible_ingredients.push(response['drinks'][pi]['strIngredient1'].toLowerCase());
+                            }
+                            // console.log(message, possible_ingredients);
+                            let random_ingredient = possible_ingredients[randomNumberBetween(0, possible_ingredients.length-1)];
+                            api.sendMessage(`I dont recognize that ingredient. Try saying something like, "!cocktail ${random_ingredient}"`, group);
+                        });
+                    });
+                }
             });
-        }).on('error', function(e){
-            console.log("Got an error trying to get ingredient list: ", e);
-        });
+        });  
     }
 }
 
@@ -376,8 +435,12 @@ function news(api, group, message) {
         }).then(response => {
            if (response.status == 'ok' && response.articles.length >= 1) {
                 let options = response.articles;
-                let choice = options[randomNumberBetween(0, options.length-1)];
-                let outcome = `News pertaining to ${query} from ${choice.source.name}:\n\n${choice.title}.\n\n${choice.description}`;
+                let selection = randomNumberBetween(0, options.length-1);
+                while (selection > 5) { // Keep it among the first six results to preserve high relevance to the query
+                    selection = randomNumberBetween(0, options.length-1);
+                }
+                let choice = options[selection];
+                let outcome = `News related to ${query} from ${choice.source.name}:\n\n${choice.title}.\n\n${choice.description}`;
                 api.sendMessage(outcome, group);
            }
            else {
@@ -390,7 +453,7 @@ function news(api, group, message) {
 function weather(api, group, message) {
     var query = message.split(' ');
     if (query.length == 1) {
-        api.sendMessage('Specify a city or zip code, e.g. !weather new york or !weather 90210', group);
+        api.sendMessage('Specify a city or zip code, e.g. "!weather new york" or "!weather 90210"', group);
     }
     else if (!isNaN(query[1])) {
         query.splice(0, 1);
@@ -403,7 +466,7 @@ function weather(api, group, message) {
                 body += chunk;
             });
             res.on('end', function(){
-                response = JSON.parse(body);
+                var response = JSON.parse(body);
                 // console.log(response)
                 if (response.weather) {
                     let outcome = `Weather in ${response.name || '?'}: ${Math.round(response.main.temp) || '?'}˚ and ${response.weather[0].description || '?'}.\nLow: ${Math.round(response.main.temp_min) || '?'}˚ High: ${Math.round(response.main.temp_max) || '?'}˚`;
@@ -426,7 +489,7 @@ function weather(api, group, message) {
                 body += chunk;
             });
             res.on('end', function(){
-                response = JSON.parse(body);
+                var response = JSON.parse(body);
                 // console.log(response)
                 if (response.weather) {
                     let outcome = `Weather in ${response.name || '?'}: ${Math.round(response.main.temp) || '?'}˚ and ${response.weather[0].description || '?'}.\nLow: ${Math.round(response.main.temp_min) || '?'}˚ High: ${Math.round(response.main.temp_max) || '?'}˚`;
@@ -476,7 +539,7 @@ function recipes(api, group, message) {
                 body += chunk;
             });
             res.on('end', function() {
-                response = JSON.parse(body);
+                var response = JSON.parse(body);
                 let recipe = response.recipes[0];
                 let ings = [];
                 for (var i = 0; i < recipe.extendedIngredients.length; i++) {
@@ -500,7 +563,7 @@ function recipes(api, group, message) {
                 body += chunk;
             });
             res.on('end', function() {
-                response = JSON.parse(body);
+                var response = JSON.parse(body);
                 console.log(response);
                 let recipe = response.recipes[0];
                 if (recipe) {
@@ -540,7 +603,7 @@ function wine(api, group, message, sender) {
             body += chunk;
         });
         res.on('end', function() {
-            response = JSON.parse(body);
+            var response = JSON.parse(body);
             let wines = response.recommendedWines;
             if(wines) {
                 let wine1 = `${wines[0].title}\n${wines[0].description}\nRating: ${wines[0].averageRating.toFixed(2)}\nPrice: ${wines[0].price}`;
@@ -564,7 +627,7 @@ function trivia(api, group) {
             body += chunk;
         });
         res.on('end', function() {
-            response = JSON.parse(body);
+            var response = JSON.parse(body);
             let question = he.decode(response.results[0].question);
             let answers = response.results[0].incorrect_answers;
             answers.push(response.results[0].correct_answer);
@@ -591,13 +654,126 @@ function trivia(api, group) {
     });
 }
 
+function images(api, group, message) {
+    let query = message.split(' ');
+
+    if (query.length == 1) {
+        api.sendMessage('Please provide a search query, like "!pics whales"', group);
+        return null;
+    }
+
+    query.splice(0, 1);
+    query = query.join(' ');
+    
+    let url1 = `https://www.googleapis.com/customsearch/v1?key=${SEARCH_API_KEY}&cx=${SEARCH_ID}&q=${query}&searchType=image&num=10`;
+    let url2 = `https://www.googleapis.com/customsearch/v1?key=${SEARCH_API_KEY}&cx=${SEARCH_ID}&q=${query}&searchType=image&num=10&start=11`;
+    var images = [];
+
+    // Get 20 image results. Each GET can only receive 10 results so do it twice.
+
+    https.get(url1, (res) => {
+        var body = '';
+        res.on('data', function(chunk) {
+            body += chunk;
+        });
+        res.on('end', function() {
+            var response = JSON.parse(body);
+            for (var i = 0; i < response.items.length; i++) {
+                images.push(response.items[i].link);
+            }
+            https.get(url2, (res) => {
+                var body = '';
+                res.on('data', function(chunk) {
+                    body += chunk;
+                });
+                res.on('end', function() {
+                    var response = JSON.parse(body);
+                    
+                    for (var i = 0; i < response.items.length; i++) {
+                        images.push(response.items[i].link);
+                    }
+        
+                    console.log(`Got the following links for query: ${query}`);
+                    console.log(images);
+        
+                    var filename = query.replace(' ', '_');
+                    var dl_path = `./images/${filename+generateUniqueCode()}`;
+                    var path = `${dl_path}/${filename}.jpeg`;
+        
+                    fs.mkdirSync(dl_path);
+
+                    // Randomly select 16 images of the 20 gathered to download
+                    // Only 12 are wanted for delivery, so save some downloading time.
+                    // But sometimes downloads will fail. So have 3 extra.
+                    // This also makes it so repeated queries can return satisfyingly different results.
+                    for (let i = images.length - 1; i > 0; i--) {
+                        const j = Math.floor(Math.random() * (i + 1));
+                        [images[i], images[j]] = [images[j], images[i]];
+                    }
+                    while (images.length > 15) {
+                        images.splice(0, 1);
+                    }
+
+                    console.log('Downloading the following images: ' + images);
+        
+                    download(images, dl_path).then(result => {
+                        var downloaded_images = [];
+                        for (var r = 0; r < result.length; r++) {
+                            if (result[r].filename) {
+                                downloaded_images.push(result[r].filename)
+                            }
+                        }
+        
+                        // Only keep and use 12 images of the 15 downloaded. Shuffling again cuz why not, randomness is fun.
+                        for (let i = downloaded_images.length - 1; i > 0; i--) {
+                            const j = Math.floor(Math.random() * (i + 1));
+                            [downloaded_images[i], downloaded_images[j]] = [downloaded_images[j], downloaded_images[i]];
+                        }
+                        while (downloaded_images.length > 12) {
+                            downloaded_images.splice(0, 1);
+                        }
+
+                        console.log('Using the following images in collage: ' + downloaded_images);
+        
+                        const options = {
+                            sources: downloaded_images,
+                            width: 4, // number of images per row
+                            height: 3, // number of images per column
+                            imageWidth: 350, // width of each image
+                            imageHeight: 250, // height of each image
+                            // backgroundColor: "#cccccc", // optional, defaults to #eeeeee.
+                            spacing: 2, // optional: pixels between each image
+                            textStyle: {height: 2}
+                        };
+                        
+                        createCollage(options).then((canvas) => {
+                            console.log('Created collage. Sending now.');
+
+                            const src = canvas.jpegStream();
+                            const dest = fs.createWriteStream(path);
+                            src.pipe(dest);
+                            dest.on('finish', () => {
+                                var msg = {
+                                    body: `Here's some pictures of ${query}`,
+                                    attachment: fs.createReadStream(path)
+                                }
+                                api.sendMessage(msg, group);
+                            })
+                        });
+                    }).catch(error => console.log(error));
+                });
+            })
+        });
+    })
+}
+    
 
 module.exports = {
     help,
     introduceSelf,
     greet,
     respondToAF,
-    tellAFToSTFU,
+    tellAFtoSTFU,
     flipACoin,
     rollDice,
     crystalBall,
@@ -611,5 +787,6 @@ module.exports = {
     alert,
     recipes,
     wine,
-    trivia
+    trivia,
+    images
 }
